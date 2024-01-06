@@ -1,8 +1,13 @@
 import torch
 import torchvision 
+import pathlib
 
 def load_dataset():
     """Loads the raw CIFAR10 dataset (either from "data/raw" or the internet) and saves it in "data/processed" folder"""
+    # Create the "data/raw/CIFAR10" and "data/processed/CIFAR10" folders if they don't exist
+    pathlib.Path("./data/raw/CIFAR10").mkdir(parents=True, exist_ok=True)
+    pathlib.Path("./data/processed/CIFAR10").mkdir(parents=True, exist_ok=True)
+
     # Load / download the datasets and store them in "data/raw" folder 
     train_dataset = torchvision.datasets.CIFAR10(root="./data/raw/CIFAR10", train=True, download=True) 
     test_dataset = torchvision.datasets.CIFAR10(root="./data/raw/CIFAR10", train=False, download=True)

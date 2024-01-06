@@ -178,3 +178,4 @@ cython_debug/
 
 # Temporary files to ignore 
 data/ 
+**lightning_logs/

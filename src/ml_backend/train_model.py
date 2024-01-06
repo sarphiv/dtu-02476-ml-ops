@@ -49,18 +49,18 @@ def get_dataloader(transform, split: Literal["train", "test"], batch_size: int, 
 
 
 
-timm_model = timm.create_model('resnet18', pretrained=True, num_classes=10)
+timm_model = timm.create_model('resnet18', pretrained=True, num_classes=10, )
 
 
 transform = get_transform(timm_model)
-train_dataloader = get_dataloader(transform, "train", batch_size=32, num_workers=1)
-test_dataloader = get_dataloader(transform, "test", batch_size=32, num_workers=1)
+train_dataloader = get_dataloader(transform, "train", batch_size=32, num_workers=10)
+test_dataloader = get_dataloader(transform, "test", batch_size=32, num_workers=10)
 
 
 
 model = BaseModel(timm_model, learning_rate=1e-3)
 
-trainer = pl.Trainer(max_epochs=2, logger=True)
+trainer = pl.Trainer(max_epochs=2, logger=True, log_every_n_steps=1)
 trainer.fit(model, train_dataloader, test_dataloader)
 
 

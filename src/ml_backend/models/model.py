@@ -23,7 +23,7 @@ class BaseModel(pl.LightningModule):
         
         """
         super().__init__()
-        self.save_hyperparameters()
+        self.save_hyperparameters(ignore=['timm_model'])
         self.model = timm_model
         self.learning_rate = learning_rate
     
@@ -45,7 +45,9 @@ class BaseModel(pl.LightningModule):
         x, y = batch
         y_hat = self.forward(x)
         loss = F.cross_entropy(y_hat, y)
-        self.log(f'{mode}_loss', loss)
+        accuracy = (y_hat.argmax(1) == y).float().mean().item()
+        self.log(f'{mode}_loss', loss.item())
+        self.log(f'{mode}_accuracy', accuracy)
         return loss
     
     def training_step(self, batch: int, batch_idx: int) -> TensorType[1]:

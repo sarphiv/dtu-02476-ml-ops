@@ -1,0 +1,23 @@
+{
+    "name": "Dockerfile devcontainer",
+    "build": {
+        "context": "..",
+        "dockerfile": "../dockerfiles/dev.Dockerfile"
+    },
+    "workspaceFolder": "/workspace",
+    "mounts": [
+        "source=.,target=/workspace,type=bind"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-azuretools.vscode-docker"
+            ]
+        }
+    },
+    "hostRequirements": {
+        "gpu": true
+    },
+    "overrideCommand": true
+}

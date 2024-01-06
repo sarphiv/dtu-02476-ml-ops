@@ -1,5 +1,7 @@
 from typing import List, Tuple, Dict, Union, Optional, Callable, Any, Iterable, Literal
 
+
+
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -30,11 +32,7 @@ def get_dataloader(transform, split: Literal["train", "test"], batch_size: int, 
     dataloader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, **dataloader_kwargs)
     return dataloader
 
-timm_model = timm.create_model('resnet18', pretrained=True, num_classes=10)
 
-transform = get_transform(timm_model)
-train_dataloader = get_dataloader(transform, "train", batch_size=32, num_workers=2)
-test_dataloader = get_dataloader(transform, "test", batch_size=32, num_workers=2)
 
 
 # url, filename = ("https://github.com/pytorch/hub/raw/master/images/dog.jpg", "dog.jpg")
@@ -50,9 +48,21 @@ test_dataloader = get_dataloader(transform, "test", batch_size=32, num_workers=2
 #     print([(model.get_classifier().fc.out_features[idx], prob[idx].item()) for idx in indices[0][:5]])
 
 
+
+timm_model = timm.create_model('resnet18', pretrained=True, num_classes=10)
+
+
+transform = get_transform(timm_model)
+train_dataloader = get_dataloader(transform, "train", batch_size=32, num_workers=1)
+test_dataloader = get_dataloader(transform, "test", batch_size=32, num_workers=1)
+
+
+
 model = BaseModel(timm_model, learning_rate=1e-3)
 
-trainer = pl.Trainer(max_epochs=1)
+trainer = pl.Trainer(max_epochs=2, logger=True)
 trainer.fit(model, train_dataloader, test_dataloader)
 
-trainer.test(test_dataloaders=test_dataloader)
+
+optimizer = model.configure_optimizers()
+

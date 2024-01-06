@@ -18,7 +18,8 @@
         }
     },
     "hostRequirements": {
-        "gpu": true
+        "gpu": true,
+        "memory": "4gb"
     },
     "overrideCommand": true
 }

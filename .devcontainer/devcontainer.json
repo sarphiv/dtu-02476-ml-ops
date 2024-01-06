@@ -18,10 +18,11 @@
         }
     },
     "hostRequirements": {
-        "gpu": true,
-        "memory": "4gb"
+        "gpu": true
     },
     "runArgs": [
-        "--shm-size=4gb"],
+        "--shm-size=4gb", 
+        "--gpus=all"
+    ],
     "overrideCommand": true
 }

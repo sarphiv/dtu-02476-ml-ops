@@ -53,8 +53,8 @@ timm_model = timm.create_model('resnet18', pretrained=True, num_classes=10)
 
 
 transform = get_transform(timm_model)
-train_dataloader = get_dataloader(transform, "train", batch_size=32, num_workers=1)
-test_dataloader = get_dataloader(transform, "test", batch_size=32, num_workers=1)
+train_dataloader = get_dataloader(transform, "train", batch_size=32, num_workers=4)
+test_dataloader = get_dataloader(transform, "test", batch_size=32, num_workers=4)
 
 
 

@@ -23,7 +23,6 @@ class BaseModel(pl.LightningModule):
         
         """
         super().__init__()
-        self.save_hyperparameters()
         self.model = timm_model
         self.learning_rate = learning_rate
     

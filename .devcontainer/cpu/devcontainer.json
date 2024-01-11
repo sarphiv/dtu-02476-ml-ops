@@ -1,8 +1,8 @@
 {
-    "name": "Dockerfile devcontainer",
+    "name": "Dockerfile devcontainer cpu",
     "build": {
-        "context": "..",
-        "dockerfile": "../dockerfiles/dev.Dockerfile"
+        "context": "../..",
+        "dockerfile": "../../dockerfiles/dev.Dockerfile"
     },
     "workspaceFolder": "/workspace",
     "mounts": [
@@ -17,12 +17,6 @@
             ]
         }
     },
-    "hostRequirements": {
-        "gpu": true
-    },
-    "runArgs": [
-        "--shm-size=4gb", 
-        "--gpus=all"
-    ],
+
     "overrideCommand": true
 }

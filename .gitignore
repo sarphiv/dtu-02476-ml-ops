@@ -177,5 +177,5 @@ cython_debug/
 #.idea/
 
 # Temporary files to ignore 
-data/ 
+data/*
 **lightning_logs/

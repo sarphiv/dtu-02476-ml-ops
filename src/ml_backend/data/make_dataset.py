@@ -1,31 +1,45 @@
-import torch
-import torchvision 
-import pathlib
+from pathlib import Path
 
-def load_dataset():
-    """Loads the raw CIFAR10 dataset (either from "data/raw" or the internet) and saves it in "data/processed" folder"""
+import torch
+from torch.utils.data import TensorDataset
+import torchvision 
+
+
+def make_dataset(data_dir: str | Path = ".") -> None:
+    """Loads the raw CIFAR10 dataset (either from "data/raw" or the internet) and saves it in "data/processed" folder
+    
+    Args:
+        data_dir (str | Path, optional): The path to the root directory of the project. Defaults to ".".
+    """
+    # Create paths
+    raw_path = Path(data_dir) / "data/raw/CIFAR10"
+    processed_path = Path(data_dir) / "data/processed/CIFAR10"
+    
     # Create the "data/raw/CIFAR10" and "data/processed/CIFAR10" folders if they don't exist
-    pathlib.Path("./data/raw/CIFAR10").mkdir(parents=True, exist_ok=True)
-    pathlib.Path("./data/processed/CIFAR10").mkdir(parents=True, exist_ok=True)
+    raw_path.mkdir(parents=True, exist_ok=True)
+    processed_path.mkdir(parents=True, exist_ok=True)
 
     # Load / download the datasets and store them in "data/raw" folder 
-    train_dataset = torchvision.datasets.CIFAR10(root="./data/raw/CIFAR10", train=True, download=True) 
-    test_dataset = torchvision.datasets.CIFAR10(root="./data/raw/CIFAR10", train=False, download=True)
+    train_dataset = torchvision.datasets.CIFAR10(root=raw_path, train=True, download=True) 
+    test_dataset = torchvision.datasets.CIFAR10(root=raw_path, train=False, download=True)
 
-    # Create a transform to make all images tensors 
-    transform = torchvision.transforms.ToTensor()
-    # If we want more transformations, we can add them here
-    # transform = torchvision.transforms.Compose([
-    #     torchvision.transforms.ToTensor(),
-    #     ]) 
-    train_dataset.transform = transform
-    test_dataset.transform = transform
+    # Get the data 
+    train_data = train_dataset.data.transpose((0, 3, 1, 2))
+    test_data = test_dataset.data.transpose((0, 3, 1, 2))
+    train_targets = torch.tensor(train_dataset.targets)
+    test_targets = torch.tensor(test_dataset.targets)
 
-    # Save the datasets in "data/processed" folder
-    torch.save(train_dataset, "./data/processed/CIFAR10/train_dataset.pt")
-    torch.save(test_dataset, "./data/processed/CIFAR10/test_dataset.pt")
+    # Convert to tensors and normalize
+    train_data = torch.from_numpy(train_data).float() / 255
+    test_data = torch.from_numpy(test_data).float() / 255
+
+    # Save the data in "data/processed" folder
+    torch.save(train_data, processed_path / "train_dataset.pt")
+    torch.save(test_data, processed_path / "test_dataset.pt")
+    torch.save(train_targets, processed_path / "train_targets.pt")
+    torch.save(test_targets, processed_path / "test_targets.pt")
 
 
 if __name__ == '__main__':
     # Get the data and process it
-    load_dataset()
+    make_dataset()

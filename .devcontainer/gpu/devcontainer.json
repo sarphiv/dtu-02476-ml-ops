@@ -25,5 +25,5 @@
         "--gpus=all"
     ],
     "overrideCommand": true,
-    "postStartCommand": "pip install -e ."
+    "postStartCommand": "pip install -e .[dev]"
 }

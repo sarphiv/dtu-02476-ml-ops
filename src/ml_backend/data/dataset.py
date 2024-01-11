@@ -77,7 +77,7 @@ def load_dataset(data_dir: str | Path = ".", transform: T_transforms=None) -> tu
     test_targets = Path(data_dir) / "data/processed/CIFAR10/test_targets.pt"
 
     # Format into dataset 
-    train_dataset = CIFAR10Dataset(data_file=train_data, targets_file=train_targets, transform=transform)
-    test_dataset = CIFAR10Dataset(data_file=test_data, targets_file=test_targets, transform=transform)
+    train_dataset = CIFAR10Dataset(data_path=train_data, targets_path=train_targets, transform=transform)
+    test_dataset = CIFAR10Dataset(data_path=test_data, targets_path=test_targets, transform=transform)
     
     return train_dataset, test_dataset

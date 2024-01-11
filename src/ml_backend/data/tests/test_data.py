@@ -37,5 +37,5 @@ def test_data_dimensions(data_directory):
     assert test_dataset.targets.shape == (10000,)
 
     # Check the dimensions of a single image
-    assert train_dataset[0].shape == (3, 32, 32)
+    assert train_dataset[0][0].shape == (3, 32, 32)
 

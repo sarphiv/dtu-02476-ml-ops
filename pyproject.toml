@@ -16,7 +16,6 @@ dynamic = ["dependencies", "optional-dependencies"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-# packages = ["ml_backend", "ml_backend.data", "ml_backend.models", "ml_backend.visualizations"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

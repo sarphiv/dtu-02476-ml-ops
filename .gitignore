@@ -173,6 +173,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# Temporary files to ignore 
+# Temporary files to ignore
 data/*
 **lightning_logs/

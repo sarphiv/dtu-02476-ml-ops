@@ -1,4 +1,4 @@
-hyperparameters: 
+hyperparameters:
   batch_size: 1000
   epochs: 10
   learning_rate: 0.001

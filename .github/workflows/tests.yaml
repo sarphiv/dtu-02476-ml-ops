@@ -21,8 +21,7 @@ jobs:
         cache: "pip"
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
-        pip install -r requirements_dev.txt
+        pip install .[dev]
     - name: Verify formatting
       run: ruff src
     - name: Test with pytest

@@ -21,6 +21,7 @@
         "gpu": true
     },
     "runArgs": [
+        "--shm-size=4gb",
         "--gpus=all"
     ],
     "overrideCommand": true,

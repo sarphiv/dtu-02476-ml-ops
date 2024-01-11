@@ -1,6 +1,7 @@
+import pathlib
+
 import torch
 import torchvision 
-import pathlib
 
 def load_dataset():
     """Loads the raw CIFAR10 dataset (either from "data/raw" or the internet) and saves it in "data/processed" folder"""

@@ -29,8 +29,8 @@ def test_data_dimensions(data_directory):
     train_dataset, test_dataset = load_dataset(data_directory)
 
     # Check the dimensions of the loaded data
-    assert train_dataset.data.shape == (50000, 3, 32, 32)
-    assert test_dataset.data.shape == (10000, 3, 32, 32)
+    assert train_dataset.data.shape == (50000, 32, 32, 3)
+    assert test_dataset.data.shape == (10000, 32, 32, 3)
 
     # Check the dimensions of targets
     assert train_dataset.targets.shape == (50000,)

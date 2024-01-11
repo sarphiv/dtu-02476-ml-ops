@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import numpy as np
 import torch
 import torchvision
 
@@ -23,14 +24,11 @@ def make_dataset(data_dir: str | Path = ".") -> None:
     test_dataset = torchvision.datasets.CIFAR10(root=raw_path, train=False, download=True)
 
     # Get the data
-    train_data = train_dataset.data.transpose((0, 3, 1, 2))
-    test_data = test_dataset.data.transpose((0, 3, 1, 2))
-    train_targets = torch.tensor(train_dataset.targets)
-    test_targets = torch.tensor(test_dataset.targets)
-
-    # Convert to tensors and normalize
-    train_data = torch.from_numpy(train_data).float() / 255
-    test_data = torch.from_numpy(test_data).float() / 255
+    # NOTE: Nothing is done for now
+    train_data = train_dataset.data
+    test_data = test_dataset.data
+    train_targets = np.array(train_dataset.targets)
+    test_targets = np.array(test_dataset.targets)
 
     # Save the data in "data/processed" folder
     torch.save(train_data, processed_path / "train_dataset.pt")

@@ -1,14 +1,16 @@
 from typing import Callable
 from pathlib import Path
+from PIL import Image
 
 import torch
 from torch.utils.data import Dataset
 from torchtyping import TensorType
+from torchvision.transforms.functional import to_tensor
 
-from ml_backend.types import batch_size
+from ml_backend.types import channels, height, width
 
 
-T_transforms = Callable[[TensorType[3, 32, 32]], TensorType[3, 32, 32]]
+T_transforms = Callable[[Image.Image], TensorType[3, 32, 32]]
 
 
 class CIFAR10Dataset(Dataset):
@@ -16,7 +18,7 @@ class CIFAR10Dataset(Dataset):
         self,
         data_path: str | Path,
         targets_path: str | Path,
-        transform: T_transforms = None
+        transform: T_transforms
     ) -> None:
         """
         Initialize the dataset.
@@ -33,10 +35,10 @@ class CIFAR10Dataset(Dataset):
 
         self.data = torch.load(data_path)
         self.targets = torch.load(targets_path)
-        self.transform = transform
+        self.transform = transform or to_tensor
 
 
-    def __getitem__(self, index: int) -> tuple[TensorType[batch_size, 3, 32, 32], TensorType[batch_size]]:
+    def __getitem__(self, index: int) -> tuple[TensorType[channels, height, width], TensorType[1]]:
         """
         Retrieve the item at the given index from the dataset.
 
@@ -44,12 +46,9 @@ class CIFAR10Dataset(Dataset):
             index (int): The index of the item to retrieve.
 
         Returns:
-            tuple[TensorType[batch_size, 3, 32, 32], TensorType[batch_size]]: A tuple containing the transformed data and the target label.
+            tuple[Image[3, 32, 32], TensorType[1]]: A tuple containing the transformed data and the target label.
         """
-        if self.transform is None:
-            return (self.data[index], self.targets[index])
-        else:
-            return (self.transform(self.data[index]), self.targets[index])
+        return (self.transform(Image.fromarray(self.data[index])), self.targets[index])
 
 
     def __len__(self) -> int:

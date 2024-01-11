@@ -1,5 +1,5 @@
 from typing import List, Tuple, Dict, Union, Optional, Callable, Any, Iterable, Literal
-
+import os
 
 
 import torch
@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader, random_split
 import torchvision
 from torchvision import transforms
 import pytorch_lightning as pl
+from pytorch_lightning.loggers import WandbLogger
 
 import timm
 from timm.data import resolve_data_config
@@ -18,6 +19,9 @@ import urllib.request
 from PIL import Image
 import matplotlib.pyplot as plt
 from omegaconf import OmegaConf
+import hydra
+import wandb
+
 
 from ml_backend.models.model import BaseModel
 
@@ -28,7 +32,7 @@ def get_transform(model):
     return transform
 
 def get_dataloader(transform, split: Literal["train", "test"], batch_size: int, num_workers: int, **dataloader_kwargs) -> DataLoader:
-    dataset = torch.load(f"./data/processed/CIFAR10/{split}_dataset.pt")
+    dataset = torch.load(f"/workspace/data/processed/CIFAR10/{split}_dataset.pt")
     dataset.transform = transform
     dataloader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, **dataloader_kwargs)
     return dataloader
@@ -49,20 +53,28 @@ def get_dataloader(transform, split: Literal["train", "test"], batch_size: int, 
 #     print([(model.get_classifier().fc.out_features[idx], prob[idx].item()) for idx in indices[0][:5]])
 
 
+@hydra.main(config_path="../../configs", config_name="config", version_base="1.3")
+def train(cfg):
 
-timm_model = timm.create_model('resnet18', pretrained=True, num_classes=10, )
+    torch.manual_seed(cfg.seed)
+    wandb.config = OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True)
 
+    timm_model = timm.create_model('resnet18', pretrained=True, num_classes=10, )
 
-transform = get_transform(timm_model)
-train_dataloader = get_dataloader(transform, "train", batch_size=32, num_workers=10)
-test_dataloader = get_dataloader(transform, "test", batch_size=32, num_workers=10)
+    transform = get_transform(timm_model)
+    train_dataloader = get_dataloader(transform, "train", batch_size=cfg.batch_size, num_workers=cfg.num_workers)
+    test_dataloader = get_dataloader(transform, "test", batch_size=cfg.batch_size, num_workers=cfg.num_workers)
 
+    model = BaseModel(timm_model, learning_rate=cfg.learning_rate)
 
+    logger = WandbLogger(
+        project="dtu_mlops_02476",
+        log_model=True,
+        entity="metrics_logger",
+        )
 
-model = BaseModel(timm_model, learning_rate=1e-3)
+    trainer = pl.Trainer(max_epochs=cfg.epochs, logger=logger, log_every_n_steps=cfg.log_interval)
+    trainer.fit(model, train_dataloader, test_dataloader)
 
-trainer = pl.Trainer(max_epochs=2, logger=True, log_every_n_steps=1)
-trainer.fit(model, train_dataloader, test_dataloader)
-
-
-optimizer = model.configure_optimizers()
+if __name__ == "__main__":
+    train()

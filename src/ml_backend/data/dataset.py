@@ -3,7 +3,6 @@ from pathlib import Path
 
 import torch
 from torch.utils.data import Dataset
-import torchvision 
 from torchtyping import TensorType
 
 

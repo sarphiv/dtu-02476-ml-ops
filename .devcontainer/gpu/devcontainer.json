@@ -21,7 +21,8 @@
         "gpu": true
     },
     "runArgs": [
-        "--gpus=all"
+    "--shm-size=4gb",
+    "--gpus=all"
     ],
     "overrideCommand": true,
     "postStartCommand": "pip install -e ."

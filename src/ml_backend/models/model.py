@@ -4,13 +4,15 @@ import torch
 import pytorch_lightning as pl
 from torch import nn
 from torch.nn import functional as F
-from torch.utils.data import DataLoader, random_split
-from torchvision import transforms
-import timm
 from torchtyping import TensorType
 
 class BaseModel(pl.LightningModule):
-    def __init__(self, timm_model: torch.nn.Module, learning_rate: float):
+    def __init__(
+            self,
+            timm_model: nn.Module,
+            learning_rate: float,
+            weight_decay: float,
+            ):
         """
         Instantiates a ResNet model from timm library as a pytorch lightning module.
 
@@ -26,6 +28,8 @@ class BaseModel(pl.LightningModule):
         self.save_hyperparameters(ignore=['timm_model'])
         self.model = timm_model
         self.learning_rate = learning_rate
+        self.weight_decay = weight_decay
+
     
     def forward(self, x: TensorType["batch_size", "channels", "height", "width"]) -> TensorType["batch_size", "num_classes"]:
         """
@@ -60,6 +64,6 @@ class BaseModel(pl.LightningModule):
         return self._step_helper(batch, batch_idx, 'test')
     
     def configure_optimizers(self) -> torch.optim.Optimizer:
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate, weight_decay=self.weight_decay)
         return optimizer
     

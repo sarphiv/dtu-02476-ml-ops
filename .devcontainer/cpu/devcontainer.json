@@ -19,5 +19,5 @@
     },
     "runArgs": ["--shm-size=4gb"],
     "overrideCommand": true,
-    "postStartCommand": "pip install -e .[dev]"
+    "postStartCommand": "pip install -e ."
 }

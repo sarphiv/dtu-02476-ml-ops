@@ -18,7 +18,7 @@ import urllib.request
 from PIL import Image
 import matplotlib.pyplot as plt
 
-from models.model import BaseModel
+from ml_backend.models.model import BaseModel
 
 
 def get_transform(model):

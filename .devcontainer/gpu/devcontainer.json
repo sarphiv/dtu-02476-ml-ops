@@ -23,5 +23,6 @@
     "runArgs": [
         "--gpus=all"
     ],
-    "overrideCommand": true
+    "overrideCommand": true,
+    "postStartCommand": "pip install -e ."
 }

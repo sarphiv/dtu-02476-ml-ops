@@ -17,6 +17,7 @@ from timm.data.transforms_factory import create_transform
 import urllib.request
 from PIL import Image
 import matplotlib.pyplot as plt
+from omegaconf import OmegaConf
 
 from ml_backend.models.model import BaseModel
 
@@ -65,4 +66,3 @@ trainer.fit(model, train_dataloader, test_dataloader)
 
 
 optimizer = model.configure_optimizers()
-

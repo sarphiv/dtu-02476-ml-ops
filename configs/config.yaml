@@ -7,4 +7,4 @@ seed: 42
 log_interval: 10
 save_model: True
 save_interval: 1 # save model every 1 epoch
-  
+num_workers: 4

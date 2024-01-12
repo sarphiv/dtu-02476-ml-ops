@@ -181,3 +181,5 @@ data/
 **lightning_logs/
 outputs/
 wandb/
+dtu_mlops_02476/
+**.ckpt

@@ -6,7 +6,7 @@ from torch import nn
 from torch.nn import functional as F
 from torchtyping import TensorType
 
-class BaseModel(pl.LightningModule):
+class LightningWrapper(pl.LightningModule):
     def __init__(
             self,
             timm_model: nn.Module,

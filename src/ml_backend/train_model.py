@@ -18,7 +18,7 @@ import hydra
 import wandb
 
 
-from ml_backend.models.model import BaseModel
+from ml_backend.models.model import LightningWrapper
 
 
 def get_transform(model: nn.Module):
@@ -72,7 +72,7 @@ def train(cfg):
     """
 
     # set seed
-    torch.manual_seed(cfg.seed)
+    pl.seed_everything(cfg.seed)
 
     ### This will likely be changed in a future version to 
     ### enable the choice between multiple models
@@ -86,7 +86,7 @@ def train(cfg):
     test_dataloader = get_dataloader(transform, "test", batch_size=cfg.models.batch_size, num_workers=cfg.num_workers)
 
     # instantiate the pl model
-    model = BaseModel(
+    model = LightningWrapper(
         timm_model,
         learning_rate=cfg.models.learning_rate,
         weight_decay=cfg.models.weight_decay,)

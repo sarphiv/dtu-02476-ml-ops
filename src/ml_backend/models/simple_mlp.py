@@ -1,4 +1,3 @@
-import torch
 from torch import nn
 
 def create_mlp(input_dim, output_dim, hidden_dim, hidden_layers):

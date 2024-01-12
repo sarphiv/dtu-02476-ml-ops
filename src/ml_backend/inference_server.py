@@ -1,16 +1,26 @@
 import io
 from PIL import Image
 from http import HTTPStatus
+import os
 
 from fastapi import FastAPI, UploadFile, File
 from hydra import initialize, compose
 
 from ml_backend.predict import predict_data_class, load_model_best
 
+print(os.getcwd())
 
-with initialize(config_path="../../configs", version_base="1.3"):
+# with initialize(config_path="../../configs", version_base="1.3"):
+#     cfg = compose(config_name="config")
+#     app = FastAPI()
+#     model = load_model_best(cfg)
+
+with initialize(config_path=os.environ.get("CONFIG_DIR", "../../configs"), version_base="1.3"):
+    print(os.getcwd())
     cfg = compose(config_name="config")
+    print(os.getcwd())
     app = FastAPI()
+    print(os.getcwd(), cfg.models.model_dir)
     model = load_model_best(cfg)
 
 

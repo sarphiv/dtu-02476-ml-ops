@@ -1,5 +1,6 @@
 defaults:
   - training.models: 'simple_mlp'
+  - _self_
 training:
   epochs: 1
   seed: 42

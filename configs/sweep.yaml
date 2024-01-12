@@ -1,0 +1,19 @@
+# sweep.yaml
+program: src/ml_backend/train_model.py
+name: wandb_sweep
+method: bayes
+metric:
+  name: val_loss
+  goal: minimize
+parameters:
+  training.models.batch_size: 
+    values: [500, 1000]
+  training.models.learning_rate:
+    min: 0.0001
+    max: 0.001
+
+command:
+  - ${env}
+  - ${interpreter}
+  - ${program}
+  - ${args_no_hyphens}

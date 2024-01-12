@@ -9,10 +9,10 @@ from ml_backend.types import batch_size, channels, height, width, num_classes
 
 T_batch = tuple[TensorType[batch_size, channels, height, width], TensorType[batch_size]]
 
-class BaseModel(pl.LightningModule):
+class LightningWrapper(pl.LightningModule):
     def __init__(
             self,
-            timm_model: nn.Module,
+            nn_model: nn.Module,
             learning_rate: float,
             weight_decay: float,
         ):
@@ -21,15 +21,15 @@ class BaseModel(pl.LightningModule):
 
         Parameters:
         -----------
-        `timm_model`: `timm.models` object
+        `nn_model`: `timm.models` object
             the timm model to be used
         `learning_rate`: `float`
             learning rate to be used for training
 
         """
         super().__init__()
-        self.save_hyperparameters(ignore=["timm_model"])
-        self.model = timm_model
+        self.save_hyperparameters(ignore=["nn_model"])
+        self.model = nn_model
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay
 

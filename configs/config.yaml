@@ -1,8 +1,13 @@
 defaults:
-  - models: 'resnet18'
-epochs: 10
-seed: 42
-log_interval: 10
-save_model: True
-save_interval: 1 # save model every 1 epoch
-num_workers: 4
+  - training.models: 'simple_mlp'
+  - _self_
+training:
+  epochs: 1
+  seed: 42
+  log_interval: 10
+  save_model: True
+  save_interval: 1 # save model every 1 epoch
+  num_workers: 4
+system:
+  wandb_project: 'dtu_mlops_02476'
+  wandb_entity: 'metrics_logger'

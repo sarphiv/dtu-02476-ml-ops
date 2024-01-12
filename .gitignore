@@ -3,9 +3,6 @@ docs/site/
 # test cache
 manual_test/
 
-# other local dev info
-.vscode/
-
 # Mac OS-specific storage files
 .DS_Store
 
@@ -176,8 +173,9 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# Temporary files to ignore 
-data/ 
+
+# Temporary files to ignore
+data/*
 **lightning_logs/
 outputs/
 wandb/

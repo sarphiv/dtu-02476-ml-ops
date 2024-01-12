@@ -1,0 +1,16 @@
+# sweep.yaml
+program: src/ml_backend/train_model.py
+method: random
+name: wandb_sweep
+parameters:
+  training.models.batch_size: 
+    values: [16,32,64]
+  training.models.learning_rate:
+    min: 0.0001
+    max: 0.1
+
+command:
+  - ${env}
+  - ${interpreter}
+  - ${program}
+  - ${args_no_hyphens}

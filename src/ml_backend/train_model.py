@@ -13,7 +13,7 @@ from timm.data.transforms_factory import create_transform
 from omegaconf import OmegaConf
 import hydra
 
-from ml_backend.models.model import BaseModel
+from ml_backend.models.model import LightningWrapper
 from ml_backend.data.dataset import CIFAR10Dataset
 
 

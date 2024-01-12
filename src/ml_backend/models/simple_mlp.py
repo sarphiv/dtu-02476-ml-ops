@@ -1,6 +1,6 @@
 from torch import nn
 
-def create_mlp(input_dim, output_dim, hidden_dim, hidden_layers):
+def create_mlp(input_dim: int, output_dim: int, hidden_dim: int, hidden_layers: int):
     """
     Creates a simple MLP model with the given input and output dimensions, hidden dimensions and number of hidden layers
 

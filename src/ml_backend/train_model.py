@@ -128,11 +128,12 @@ def train(cfg):
     trainer = pl.Trainer(
         max_epochs=cfg.training.epochs,
         logger=logger,
-        log_every_n_steps=cfg.training.log_interval
+        log_every_n_steps=cfg.training.log_interval,
+        enable_checkpointing=False,
     )
 
     # train the model
-    trainer.fit(model, train_dataloader, test_dataloader)
+    trainer.fit(model, train_dataloader, test_dataloader, )
 
 
 if __name__ == "__main__":

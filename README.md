@@ -1,9 +1,9 @@
 # DTU Course - Machine Learning Operations (02476)
-This project is part of the DTU course 02476 - Machine Learning Operations. 
+This project is part of the DTU course 02476 - Machine Learning Operations.
 
 
 ## Overall goals
-Create a website where users can upload pictures, which are then classified by an image classification model, and the result is shown to the user. The infrastructure behind this will consist of containerized services deployed to the cloud with continuous integration and deployment. 
+Create a website where users can upload pictures, which are then classified by an image classification model, and the result is shown to the user. The infrastructure behind this will consist of containerized services deployed to the cloud with continuous integration and deployment.
 
 The project will focus on the machine learning operation aspects:
 - Development happens inside `devcontainers` and will follow the conventional open source development workflow via `Github Flow`, issues, pull requests, and a Kanban board with some continuous integration on top. This is to simulate a real life open source project where contributors have to deal with challenges such as different environments and planning.
@@ -11,13 +11,13 @@ The project will focus on the machine learning operation aspects:
 - Data drift and deployed model performance will be monitored via tools that we have not yet been taught about in the course TODO
 
 ## Frameworks
-There is a requirement to use a package not covered in the DTU course. This package is PyTorch Image Models (`timm`). It will be used to provide pretrained models, help with preprocessing, and inference via the models. 
+There is a requirement to use a package not covered in the DTU course. This package is PyTorch Image Models (`timm`). It will be used to provide pretrained models, help with preprocessing, and inference via the models.
 
 ## Data
-The initial dataset will be `CIFAR10` for fine-tuning. This may be expanded upon later with a larger dataset for better general model performance. 
+The initial dataset will be `CIFAR10` for fine-tuning. This may be expanded upon later with a larger dataset for better general model performance.
 
 ## Models
-The initial model will be based upon `ResNet18`. This model was chosen for its small size so that all members of the group could run the model locally for development purposes without requiring a GPU nor a strong computer. 
+The initial model will be based upon `ResNet18`. This model was chosen for its small size so that all members of the group could run the model locally for development purposes without requiring a GPU nor a strong computer.
 
 
 # Installation

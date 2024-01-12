@@ -1,13 +1,10 @@
 from typing import Literal
-import os
 
 import torch
 from torch import nn
-from torch.nn import functional as F
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
-import torchvision
 
 import timm
 from timm.data import resolve_data_config
@@ -15,10 +12,9 @@ from timm.data.transforms_factory import create_transform
 
 from omegaconf import OmegaConf
 import hydra
-import wandb
-
 
 from ml_backend.models.model import BaseModel
+from ml_backend.data.dataset import CIFAR10Dataset
 
 
 def get_transform(model: nn.Module):
@@ -44,7 +40,7 @@ def get_dataloader(transform, split: Literal["train", "test"], batch_size: int, 
     get the train/test dataloader for the CIFAR10 dataset
     before running this function, make sure that the dataset is downloaded and processed
     (use the ml_backend.data.make_dataset.load_dataset function)
-    
+
     Parameters:
     -----------
     `transform`: `torchvision.transforms` object
@@ -59,8 +55,11 @@ def get_dataloader(transform, split: Literal["train", "test"], batch_size: int, 
     `**dataloader_kwargs`: `dict`
         other keyword arguments to be passed to the dataloader
     """
-    dataset = torch.load(f"./data/processed/CIFAR10/{split}_dataset.pt")
-    dataset.transform = transform
+    # Get the data
+    data = f"./data/processed/CIFAR10/{split}_dataset.pt"
+    labels = f"./data/processed/CIFAR10/{split}_targets.pt"
+    dataset = CIFAR10Dataset(data_path=data, targets_path=labels, transform=transform)
+    # Change to a dataloader
     dataloader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, **dataloader_kwargs)
     return dataloader
 
@@ -74,12 +73,12 @@ def train(cfg):
     # set seed
     torch.manual_seed(cfg.seed)
 
-    ### This will likely be changed in a future version to 
+    ### This will likely be changed in a future version to
     ### enable the choice between multiple models
 
     # load the timm model
     timm_model = timm.create_model('resnet18', pretrained=True, num_classes=10, )
-    
+
     # construct dataloaders
     transform = get_transform(timm_model)
     train_dataloader = get_dataloader(transform, "train", batch_size=cfg.models.batch_size, num_workers=cfg.num_workers)
@@ -89,7 +88,8 @@ def train(cfg):
     model = BaseModel(
         timm_model,
         learning_rate=cfg.models.learning_rate,
-        weight_decay=cfg.models.weight_decay,)
+        weight_decay=cfg.models.weight_decay
+    )
 
     # instantiate the logger
     logger = WandbLogger(
@@ -97,7 +97,7 @@ def train(cfg):
         log_model=True,
         entity="metrics_logger",
         config=OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True),
-        )
+    )
 
     # instantiate the trainer
     trainer = pl.Trainer(
@@ -107,7 +107,8 @@ def train(cfg):
     )
 
     # train the model
-    trainer.fit(model, train_dataloader, test_dataloader, )
+    trainer.fit(model, train_dataloader, test_dataloader)
+
 
 if __name__ == "__main__":
     train()

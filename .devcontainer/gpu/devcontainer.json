@@ -13,7 +13,8 @@
             "extensions": [
                 "ms-python.python",
                 "ms-azuretools.vscode-docker",
-                "ms-toolsai.jupyter"
+                "ms-toolsai.jupyter",
+                "ms-vsliveshare.vsliveshare"
             ]
         }
     },
@@ -25,5 +26,5 @@
         "--gpus=all"
     ],
     "overrideCommand": true,
-    "postStartCommand": "pip install -e ."
+    "postCreateCommand": "./.devcontainer/init.sh"
 }

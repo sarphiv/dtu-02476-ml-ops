@@ -1,6 +1,6 @@
 defaults:
   - models: 'resnet18'
-epochs: 10
+epochs: 3
 seed: 42
 log_interval: 10
 save_model: True

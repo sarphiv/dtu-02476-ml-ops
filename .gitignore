@@ -179,3 +179,7 @@ data/*
 **lightning_logs/
 outputs/
 wandb/
+models/*
+
+# Secrets
+.env

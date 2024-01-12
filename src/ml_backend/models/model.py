@@ -1,8 +1,8 @@
 import torch
 import pytorch_lightning as pl
-from torch import nn
 from torch.nn import functional as F
 from torchtyping import TensorType
+import timm
 
 from ml_backend.types import batch_size, channels, height, width, num_classes
 
@@ -12,9 +12,11 @@ T_batch = tuple[TensorType[batch_size, channels, height, width], TensorType[batc
 class BaseModel(pl.LightningModule):
     def __init__(
             self,
-            timm_model: nn.Module,
+            model_type: str,
             learning_rate: float,
             weight_decay: float,
+            pretrained: bool=False,
+            num_classes: int=10
         ):
         """
         Instantiates a ResNet model from timm library as a pytorch lightning module.
@@ -28,8 +30,8 @@ class BaseModel(pl.LightningModule):
 
         """
         super().__init__()
-        self.save_hyperparameters(ignore=["timm_model"])
-        self.model = timm_model
+        self.save_hyperparameters(ignore=["pretrained"])
+        self.model = timm.create_model(model_type, pretrained=pretrained, num_classes=num_classes)
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay
 

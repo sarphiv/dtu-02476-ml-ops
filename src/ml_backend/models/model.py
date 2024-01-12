@@ -21,14 +21,14 @@ class LightningWrapper(pl.LightningModule):
 
         Parameters:
         -----------
-        `timm_model`: `timm.models` object
+        `nn_model`: `timm.models` object
             the timm model to be used
         `learning_rate`: `float`
             learning rate to be used for training
 
         """
         super().__init__()
-        self.save_hyperparameters(ignore=["timm_model"])
+        self.save_hyperparameters(ignore=["nn_model"])
         self.model = nn_model
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay

@@ -3,6 +3,8 @@ from typing import Literal
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
+import torchvision
+from torchvision.transforms import InterpolationMode
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 
@@ -14,7 +16,10 @@ from omegaconf import OmegaConf
 import hydra
 
 from ml_backend.models.model import LightningWrapper
+from ml_backend.models.simple_mlp import create_mlp
 from ml_backend.data.dataset import CIFAR10Dataset
+
+
 
 
 def get_transform(model: nn.Module):
@@ -71,39 +76,59 @@ def train(cfg):
     """
 
     # set seed
-    pl.seed_everything(cfg.seed)
+    pl.seed_everything(cfg.training.seed)
 
     ### This will likely be changed in a future version to
     ### enable the choice between multiple models
 
-    # load the timm model
-    timm_model = timm.create_model('resnet18', pretrained=True, num_classes=10, )
+    match cfg.training.models.model_type:
+        case "resnet18":
 
-    # construct dataloaders
-    transform = get_transform(timm_model)
-    train_dataloader = get_dataloader(transform, "train", batch_size=cfg.models.batch_size, num_workers=cfg.num_workers)
-    test_dataloader = get_dataloader(transform, "test", batch_size=cfg.models.batch_size, num_workers=cfg.num_workers)
+            # load the timm model
+            nn_model = timm.create_model('resnet18', pretrained=True, num_classes=10, )
+
+            # construct dataloaders
+            transform = get_transform(nn_model)
+        
+        case "simple_mlp":
+            nn_model = create_mlp(
+                input_dim=32*32*3,
+                output_dim=10,
+                hidden_dim=cfg.training.models.hidden_dim,
+                hidden_layers=cfg.training.models.hidden_layers
+            )
+
+            transform = torchvision.transforms.Compose([
+                torchvision.transforms.Resize(size=34, interpolation=InterpolationMode.BICUBIC, max_size=None, antialias="warn"),
+                torchvision.transforms.CenterCrop(size=(32, 32)),
+                torchvision.transforms.ToTensor(),
+                torchvision.transforms.Normalize(mean=torch.tensor([0.4850, 0.4560, 0.4060]), std=torch.tensor([0.2290, 0.2240, 0.2250]))
+            ])
+
+    
+    train_dataloader = get_dataloader(transform, "train", batch_size=cfg.training.models.batch_size, num_workers=cfg.training.num_workers)
+    test_dataloader = get_dataloader(transform, "test", batch_size=cfg.training.models.batch_size, num_workers=cfg.training.num_workers)
 
     # instantiate the pl model
     model = LightningWrapper(
-        timm_model,
-        learning_rate=cfg.models.learning_rate,
-        weight_decay=cfg.models.weight_decay
+        nn_model,
+        learning_rate=cfg.training.models.learning_rate,
+        weight_decay=cfg.training.models.weight_decay
     )
 
     # instantiate the logger
     logger = WandbLogger(
-        project="dtu_mlops_02476",
-        log_model=True,
-        entity="metrics_logger",
-        config=OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True),
+        project=cfg.system.wandb_project,
+        log_model=False,
+        entity=cfg.system.wandb_entity,
+        config=OmegaConf.to_container(cfg.training, resolve=True, throw_on_missing=True),
     )
 
     # instantiate the trainer
     trainer = pl.Trainer(
-        max_epochs=cfg.epochs,
+        max_epochs=cfg.training.epochs,
         logger=logger,
-        log_every_n_steps=cfg.log_interval
+        log_every_n_steps=cfg.training.log_interval
     )
 
     # train the model

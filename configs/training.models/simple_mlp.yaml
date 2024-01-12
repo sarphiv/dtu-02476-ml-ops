@@ -1,0 +1,6 @@
+model_type: 'simple_mlp'
+batch_size: 1000
+learning_rate: 0.001
+weight_decay: 0.0005
+hidden_dim: 500
+hidden_layers: 2

@@ -30,5 +30,6 @@
     },
     "runArgs": ["--shm-size=4gb"],
     "overrideCommand": true,
-    "postCreateCommand": "./.devcontainer/init.sh"
+    "postCreateCommand": "./.devcontainer/init.create.sh",
+    "postStartCommand": "./.devcontainer/init.start.sh"
 }

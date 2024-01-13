@@ -5,9 +5,16 @@
         "dockerfile": "../../dockerfiles/dev.Dockerfile"
     },
     "workspaceFolder": "/workspace",
-    "mounts": [
-        "source=.,target=/workspace,type=bind"
-    ],
+    "workspaceMount": "source=.,target=/workspace,type=bind",
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": { },
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": false,
+            "upgradePackages": false
+        },
+        "ghcr.io/meaningful-ooo/devcontainer-features/fish:1": { },
+        "ghcr.io/iterative/features/dvc:1": {}
+    },
     "customizations": {
         "vscode": {
             "extensions": [
@@ -15,7 +22,10 @@
                 "ms-azuretools.vscode-docker",
                 "ms-toolsai.jupyter",
                 "ms-vsliveshare.vsliveshare"
-            ]
+            ],
+            "settings": {
+                "python.terminal.activateEnvironment": false
+            }
         }
     },
     "runArgs": ["--shm-size=4gb"],

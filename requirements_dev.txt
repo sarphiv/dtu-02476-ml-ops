@@ -7,6 +7,14 @@ pytest == 7.4.4
 # linting
 ruff == 0.1.11
 
+# Profiling
+snakeviz==2.2.0
+
+# Interactive
+ipython==8.15.0
+ipykernel==6.28.0
+ipympl==0.9.3
+
 # docs
 # mkdocs == 1.5.3
 # mkdocs-material == 9.4.6

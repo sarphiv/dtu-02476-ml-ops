@@ -1,7 +1,8 @@
 model_type: 'resnet18'
 model_dir: 'models/resnet18'
+pretrained: True
 save_top_k: 2
 batch_size: 100
 learning_rate: 0.001
 weight_decay: 0.0005
-img_size: 32
+img_size: 100

@@ -17,24 +17,6 @@ from ml_backend.models.model import BaseModel
 from ml_backend.data.dataset import CIFAR10Dataset
 
 
-def get_transform(model: nn.Module):
-    """
-    get the transform that is used to preprocess the data for the model
-    created using the timm module
-
-    Parameters:
-    ----------
-    `model`: `nn.Module`
-        the timm model to be used
-
-    Returns:
-    --------
-    `torchvision.transforms` object
-    """
-    config = resolve_data_config({}, model=model)
-    transform = create_transform(**config)
-    return transform
-
 def get_dataloader(transform, split: Literal["train", "test"], batch_size: int, num_workers: int, **dataloader_kwargs) -> DataLoader:
     """
     get the train/test dataloader for the CIFAR10 dataset
@@ -71,47 +53,47 @@ def train(cfg):
     """
 
     # set seed
-    pl.seed_everything(cfg.seed)
+    pl.seed_everything(cfg.training.seed)
 
     ### This will likely be changed in a future version to
     ### enable the choice between multiple models
 
     # instantiate the pl model
     model = BaseModel(
-        model_type=cfg.models.model_type,
-        learning_rate=cfg.models.learning_rate,
-        weight_decay=cfg.models.weight_decay,
-        pretrained=True,
-        num_classes=10
+        model_type=cfg.training.models.model_type,
+        learning_rate=cfg.training.models.learning_rate,
+        weight_decay=cfg.training.models.weight_decay,
+        model_args=cfg.training.models
     )
 
     # construct dataloaders
-    transform = get_transform(model.model)
-    train_dataloader = get_dataloader(transform, "train", batch_size=cfg.models.batch_size, num_workers=cfg.num_workers)
-    test_dataloader = get_dataloader(transform, "test", batch_size=cfg.models.batch_size, num_workers=cfg.num_workers)
+    transform = model.get_transform()
+
+    train_dataloader = get_dataloader(transform, "train", batch_size=cfg.training.models.batch_size, num_workers=cfg.training.num_workers)
+    test_dataloader = get_dataloader(transform, "test", batch_size=cfg.training.models.batch_size, num_workers=cfg.training.num_workers)
 
 
     # instantiate the logger
     logger = WandbLogger(
-        project="dtu_mlops_02476",
-        log_model=True,
-        entity="metrics_logger",
-        config=OmegaConf.to_container(cfg, resolve=True, throw_on_missing=True),
+        project=cfg.system.wandb_project, 
+        log_model=False,
+        entity=cfg.system.wandb_entity,
+        config=OmegaConf.to_container(cfg.training, resolve=True, throw_on_missing=True),
     )
 
     # Save the n best checkpoints
-    dirpath = Path(cfg.models.model_dir) / logger.experiment.id
+    dirpath = Path(cfg.training.models.model_dir) / logger.experiment.id
     checkpoint_callback = ModelCheckpoint(filename='{epoch}-{val_loss:.2f}',
                                           dirpath=dirpath,
-                                          save_top_k=cfg.models.save_top_k,
+                                          save_top_k=cfg.training.models.save_top_k,
                                           monitor="val_loss")
 
     # instantiate the trainer
     trainer = pl.Trainer(
-        max_epochs=cfg.epochs,
+        max_epochs=cfg.training.epochs,
         logger=logger,
         callbacks=[checkpoint_callback],
-        log_every_n_steps=cfg.log_interval
+        log_every_n_steps=cfg.training.log_interval
     )
 
     # train the model
@@ -120,24 +102,20 @@ def train(cfg):
     # Save the path to the best checkpoint
     checkpoint_callback.to_yaml(dirpath / "best_models.yaml")
 
-    # Compare it with the best run made in this training session
-    current_best_path, current_best_loss = min(checkpoint_callback.best_k_models.items(), key=lambda x: x[1].item())
-    current_best_loss = current_best_loss.item()
-
     # If the best model is better than the previous best, save it instead
-    with open(Path(cfg.models.model_dir) / "best_model.yaml", "w") as file:
+    with open(Path(cfg.training.models.model_dir) / "best_model.yaml", "w") as file:
         # Check if the file already exists
         if os.stat(file.name).st_size == 0:
             # If not, save the current best
-            global_best = {current_best_path: current_best_loss}
+            global_best = {checkpoint_callback.best_model_path: checkpoint_callback.best_model_score.item()}
             yaml.dump(global_best, file)
         else:
             # Load the global best run so far
             global_best = yaml.safe_load(file)
 
             # If this run is better, then save it as the global best
-            if list(global_best.values())[0] > current_best_loss:
-                global_best = {current_best_path: current_best_loss}
+            if list(global_best.values())[0] > checkpoint_callback.best_model_score:
+                global_best = {checkpoint_callback.best_model_path: checkpoint_callback.best_model_score.item()}
                 yaml.dump(global_best, file)
 
 

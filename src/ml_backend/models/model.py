@@ -26,7 +26,8 @@ class BaseModel(pl.LightningModule):
             model_type: Literal["resnet18", "simple_mlp"],
             learning_rate: float,
             weight_decay: float,
-            model_args: dict = {},
+            model_args: dict,
+            idx_to_class: dict,
         ):
         """
         Instantiates a ResNet model from timm library as a pytorch lightning module.
@@ -58,6 +59,7 @@ class BaseModel(pl.LightningModule):
         self.model = self.create_nn_model(model_type, model_args)
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay
+        self.idx_to_class = idx_to_class
 
     def get_transform(self):
         """

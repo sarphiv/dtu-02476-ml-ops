@@ -7,10 +7,10 @@
 # save_interval: 1 # save model every 1 epoch
 # num_workers: 4
 defaults:
-  - training.models: 'resnet18'
+  - training.models: 'simple_mlp'
   - _self_
 training:
-  epochs: 1
+  epochs: 5
   seed: 42
   log_interval: 10
   save_model: True

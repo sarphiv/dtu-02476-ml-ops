@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 
 import numpy as np
 import torch
@@ -45,6 +46,8 @@ def make_dataset(data_dir: str | Path = ".") -> None:
     torch.save(test_data, processed_path / "test_dataset.pt")
     torch.save(train_targets, processed_path / "train_targets.pt")
     torch.save(test_targets, processed_path / "test_targets.pt")
+    with open(processed_path / "idx_to_class.json", "w") as f:
+        json.dump({v:k for k,v in train_dataset.class_to_idx.items()}, f)
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ with initialize(config_path=os.environ.get("CONFIG_DIR", "../../configs"), versi
     cfg = compose(config_name="config")
     print(os.getcwd())
     app = FastAPI()
-    print(os.getcwd(), cfg.models.model_dir)
+    print(os.getcwd(), cfg.training.models.model_dir)
     model = load_model_best(cfg)
 
 

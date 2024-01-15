@@ -1,6 +1,7 @@
 from typing import Literal
 from pathlib import Path
 import os
+import json
 
 from torch import nn
 from torch.utils.data import DataLoader
@@ -58,12 +59,16 @@ def train(cfg):
     ### This will likely be changed in a future version to
     ### enable the choice between multiple models
 
+    with open(f"./data/processed/CIFAR10/idx_to_class.json") as f:
+        idx_to_class = json.load(f)
+
     # instantiate the pl model
     model = BaseModel(
         model_type=cfg.training.models.model_type,
         learning_rate=cfg.training.models.learning_rate,
         weight_decay=cfg.training.models.weight_decay,
-        model_args=cfg.training.models
+        model_args=cfg.training.models,
+        idx_to_class=idx_to_class
     )
 
     # construct dataloaders

@@ -1,8 +1,11 @@
 from pathlib import Path
+import json
 
 import numpy as np
 import torch
 import torchvision
+
+# DATA_TO_USE = 0.01
 
 
 def make_dataset(data_dir: str | Path = ".") -> None:
@@ -25,6 +28,14 @@ def make_dataset(data_dir: str | Path = ".") -> None:
 
     # Get the data
     # NOTE: Nothing is done for now
+    # n_points_to_use_train = int(DATA_TO_USE * len(train_dataset))
+    # n_points_to_use_test = int(DATA_TO_USE * len(test_dataset))
+
+    # train_data = train_dataset.data[:n_points_to_use_train]
+    # test_data = test_dataset.data[:n_points_to_use_test]
+    # train_targets = np.array(train_dataset.targets)[:n_points_to_use_train]
+    # test_targets = np.array(test_dataset.targets)[:n_points_to_use_test]
+
     train_data = train_dataset.data
     test_data = test_dataset.data
     train_targets = np.array(train_dataset.targets)
@@ -35,6 +46,8 @@ def make_dataset(data_dir: str | Path = ".") -> None:
     torch.save(test_data, processed_path / "test_dataset.pt")
     torch.save(train_targets, processed_path / "train_targets.pt")
     torch.save(test_targets, processed_path / "test_targets.pt")
+    with open(processed_path / "idx_to_class.json", "w") as f:
+        json.dump({v:k for k,v in train_dataset.class_to_idx.items()}, f)
 
 
 if __name__ == "__main__":

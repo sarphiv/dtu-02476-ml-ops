@@ -1,5 +1,5 @@
 # Setup environment basics
-FROM pytorch/pytorch:2.1.2-cuda12.1-cudnn8-devel
+FROM pytorch/pytorch:2.1.2-cuda12.1-cudnn8-runtime
 
 WORKDIR /workspace
 
@@ -8,7 +8,7 @@ WORKDIR /workspace
 # ENV PYTHONUNBUFFERED=True
 
 # Install system packages
-# RUN apt update && apt install -y git
+RUN apt update && apt install -y git
 
 # Set up environment
 COPY requirements.txt .

@@ -1,6 +1,11 @@
 model_type: 'simple_mlp'
+model_dir: 'models/simple_mlp'
+save_top_k: 2
 batch_size: 1000
 learning_rate: 0.001
 weight_decay: 0.0005
-hidden_dim: 500
-hidden_layers: 2
+hidden_dim: 300
+hidden_layers: 6
+input_img_height: 32
+input_img_width: 32
+img_size: 32

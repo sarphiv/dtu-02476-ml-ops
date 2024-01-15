@@ -8,15 +8,6 @@
     "mounts": [
         "source=.,target=/workspace,type=bind"
     ],
-    "features": {
-        "ghcr.io/devcontainers/features/git:1": {
-
-        },
-        "ghcr.io/devcontainers/features/common-utils:2": {
-            "configureZshAsDefaultShell": true,
-            "upgradePackages": false
-        }
-    },
     "customizations": {
         "vscode": {
             "extensions": [

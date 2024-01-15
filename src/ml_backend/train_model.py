@@ -1,44 +1,19 @@
 from typing import Literal
+from pathlib import Path
+import os
+import json
 
-import torch
-from torch import nn
 from torch.utils.data import DataLoader
-import torchvision
-from torchvision.transforms import InterpolationMode
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
-
-import timm
-from timm.data import resolve_data_config
-from timm.data.transforms_factory import create_transform
-
+from pytorch_lightning.callbacks import ModelCheckpoint
 from omegaconf import OmegaConf
 import hydra
+import yaml
 
-from ml_backend.models.model import LightningWrapper
-from ml_backend.models.simple_mlp import create_mlp
+from ml_backend.models.model import BaseModel
 from ml_backend.data.dataset import CIFAR10Dataset
 
-
-
-
-def get_transform(model: nn.Module):
-    """
-    get the transform that is used to preprocess the data for the model
-    created using the timm module
-
-    Parameters:
-    ----------
-    `model`: `nn.Module`
-        the timm model to be used
-
-    Returns:
-    --------
-    `torchvision.transforms` object
-    """
-    config = resolve_data_config({}, model=model)
-    transform = create_transform(**config)
-    return transform
 
 def get_dataloader(transform, split: Literal["train", "test"], batch_size: int, num_workers: int, **dataloader_kwargs) -> DataLoader:
     """
@@ -81,59 +56,70 @@ def train(cfg):
     ### This will likely be changed in a future version to
     ### enable the choice between multiple models
 
-    match cfg.training.models.model_type:
-        case "resnet18":
+    with open("./data/processed/CIFAR10/idx_to_class.json") as f:
+        idx_to_class = json.load(f)
 
-            # load the timm model
-            nn_model = timm.create_model('resnet18', pretrained=True, num_classes=10, )
+    # instantiate the pl model
+    model = BaseModel(
+        model_type=cfg.training.models.model_type,
+        learning_rate=cfg.training.models.learning_rate,
+        weight_decay=cfg.training.models.weight_decay,
+        model_args=cfg.training.models,
+        idx_to_class=idx_to_class
+    )
 
-            # construct dataloaders
-            transform = get_transform(nn_model)
-        
-        case "simple_mlp":
-            nn_model = create_mlp(
-                input_dim=32*32*3,
-                output_dim=10,
-                hidden_dim=cfg.training.models.hidden_dim,
-                hidden_layers=cfg.training.models.hidden_layers
-            )
+    # construct dataloaders
+    transform = model.get_transform()
 
-            transform = torchvision.transforms.Compose([
-                torchvision.transforms.Resize(size=34, interpolation=InterpolationMode.BICUBIC, max_size=None, antialias="warn"),
-                torchvision.transforms.CenterCrop(size=(32, 32)),
-                torchvision.transforms.ToTensor(),
-                torchvision.transforms.Normalize(mean=torch.tensor([0.4850, 0.4560, 0.4060]), std=torch.tensor([0.2290, 0.2240, 0.2250]))
-            ])
-
-    
     train_dataloader = get_dataloader(transform, "train", batch_size=cfg.training.models.batch_size, num_workers=cfg.training.num_workers)
     test_dataloader = get_dataloader(transform, "test", batch_size=cfg.training.models.batch_size, num_workers=cfg.training.num_workers)
 
-    # instantiate the pl model
-    model = LightningWrapper(
-        nn_model,
-        learning_rate=cfg.training.models.learning_rate,
-        weight_decay=cfg.training.models.weight_decay
-    )
 
     # instantiate the logger
     logger = WandbLogger(
-        project=cfg.system.wandb_project,
+        project=cfg.system.wandb_project, 
         log_model=False,
         entity=cfg.system.wandb_entity,
         config=OmegaConf.to_container(cfg.training, resolve=True, throw_on_missing=True),
     )
 
+    # Save the n best checkpoints
+    dirpath = Path(cfg.training.models.model_dir) / logger.experiment.id
+    checkpoint_callback = ModelCheckpoint(filename='{epoch}-{val_loss:.2f}',
+                                          dirpath=dirpath,
+                                          save_top_k=cfg.training.models.save_top_k,
+                                          monitor="val_loss")
+
     # instantiate the trainer
     trainer = pl.Trainer(
         max_epochs=cfg.training.epochs,
         logger=logger,
-        log_every_n_steps=cfg.training.log_interval,
-        enable_checkpointing=False,
+        callbacks=[checkpoint_callback],
+        log_every_n_steps=cfg.training.log_interval
     )
 
     # train the model
-    trainer.fit(model, train_dataloader, test_dataloader, )
+    trainer.fit(model, train_dataloader, test_dataloader)
+
+    # Save the path to the best checkpoint
+    checkpoint_callback.to_yaml(dirpath / "best_models.yaml")
+
+    # If the best model is better than the previous best, save it instead
+    with open(Path(cfg.training.models.model_dir) / "best_model.yaml", "w") as file:
+        # Check if the file already exists
+        if os.stat(file.name).st_size == 0:
+            # If not, save the current best
+            global_best = {checkpoint_callback.best_model_path: checkpoint_callback.best_model_score.item()}
+            yaml.dump(global_best, file)
+        else:
+            # Load the global best run so far
+            global_best = yaml.safe_load(file)
+
+            # If this run is better, then save it as the global best
+            if list(global_best.values())[0] > checkpoint_callback.best_model_score:
+                global_best = {checkpoint_callback.best_model_path: checkpoint_callback.best_model_score.item()}
+                yaml.dump(global_best, file)
+
 
 
 if __name__ == "__main__":

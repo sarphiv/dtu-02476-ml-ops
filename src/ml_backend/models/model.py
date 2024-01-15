@@ -5,7 +5,6 @@ import torch
 from torch import nn
 import pytorch_lightning as pl
 from torch.nn import functional as F
-import torchvision
 from torchvision import transforms
 from torchvision.transforms.functional import InterpolationMode
 

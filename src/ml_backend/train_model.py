@@ -3,13 +3,10 @@ from pathlib import Path
 import os
 import json
 
-from torch import nn
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
-from timm.data import resolve_data_config
-from timm.data.transforms_factory import create_transform
 from omegaconf import OmegaConf
 import hydra
 import yaml
@@ -59,7 +56,7 @@ def train(cfg):
     ### This will likely be changed in a future version to
     ### enable the choice between multiple models
 
-    with open(f"./data/processed/CIFAR10/idx_to_class.json") as f:
+    with open("./data/processed/CIFAR10/idx_to_class.json") as f:
         idx_to_class = json.load(f)
 
     # instantiate the pl model

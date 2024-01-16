@@ -10,12 +10,12 @@ outs:
         etag: 0885b4ddebfee183031001
         version_id: '1705410943212037'
   - relpath: resnet18/best_model.yaml
-    md5: cf2670d2e54fc56587ad06ef93936e3a
+    md5: 1d8baf21803e0ab1034400c36ee9c74e
     size: 83
     cloud:
       gs-data:
-        etag: 0883e186ecfee183031001
-        version_id: '1705410943889539'
+        etag: 089e88ada183e283031001
+        version_id: '1705412129408030'
   - relpath: resnet18/bynvi8tm/best_models.yaml
     md5: 0762ab81662e4c345116685c2e6e30fe
     size: 165

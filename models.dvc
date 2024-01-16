@@ -1,0 +1,60 @@
+outs:
+- hash: md5
+  path: models
+  files:
+  - relpath: .gitkeep
+    md5: d41d8cd98f00b204e9800998ecf8427e
+    size: 0
+    cloud:
+      gs-data:
+        etag: 0885b4ddebfee183031001
+        version_id: '1705410943212037'
+  - relpath: resnet18/best_model.yaml
+    md5: 1d8baf21803e0ab1034400c36ee9c74e
+    size: 83
+    cloud:
+      gs-data:
+        etag: 089e88ada183e283031001
+        version_id: '1705412129408030'
+  - relpath: resnet18/bynvi8tm/best_models.yaml
+    md5: 0762ab81662e4c345116685c2e6e30fe
+    size: 165
+    cloud:
+      gs-data:
+        etag: 08d0c089ecfee183031001
+        version_id: '1705410943934544'
+  - relpath: resnet18/bynvi8tm/epoch=2-val_loss=0.22.ckpt
+    md5: df85feeeea08a5e8c3181526d9fc7017
+    size: 134320326
+    cloud:
+      gs-data:
+        etag: 088cd3b290ffe183031001
+        version_id: '1705411020106124'
+  - relpath: resnet18/bynvi8tm/epoch=3-val_loss=0.23.ckpt
+    md5: 494ea07f30e1e40777fc482fa7f5916e
+    size: 134320326
+    cloud:
+      gs-data:
+        etag: 088bf189f5fee183031001
+        version_id: '1705410962815115'
+  - relpath: resnet18/x7uux0ky/best_models.yaml
+    md5: 621c620dd55bd23932bca03f52d195e4
+    size: 167
+    cloud:
+      gs-data:
+        etag: 0880fa88ecfee183031001
+        version_id: '1705410943925504'
+  - relpath: resnet18/x7uux0ky/epoch=0-val_loss=0.39.ckpt
+    md5: d7171ab293018663e0aedc67131fcc7b
+    size: 134320198
+    cloud:
+      gs-data:
+        etag: 08dbd49dfcfee183031001
+        version_id: '1705410977819227'
+  - relpath: resnet18/x7uux0ky/epoch=1-val_loss=0.44.ckpt
+    md5: 44173624b780f3155688422972e1057e
+    size: 134320326
+    cloud:
+      gs-data:
+        etag: 088992ef91ffe183031001
+        version_id: '1705411023194377'

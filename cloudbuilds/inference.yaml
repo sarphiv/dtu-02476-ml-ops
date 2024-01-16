@@ -16,5 +16,7 @@ steps:
   - 'gcr.io/$PROJECT_ID/inference:latest'
   - '--region'
   - 'europe-west1'
+options:
+  logging: CLOUD_LOGGING_ONLY
 images:
 - 'gcr.io/$PROJECT_ID/inference:latest'

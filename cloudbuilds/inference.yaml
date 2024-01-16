@@ -1,7 +1,7 @@
 steps:
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/inference:latest', '.']
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/inference:latest', '-f', 'dockerfiles/predict.Dockerfile', '.']
 # Push the container image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/inference:latest']

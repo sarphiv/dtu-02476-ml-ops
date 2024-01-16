@@ -1,6 +1,109 @@
 outs:
-- md5: a15127d8c5986674cdb5a7dc2ac0a9be.dir
-  size: 359370577
-  nfiles: 15
-  hash: md5
+- hash: md5
   path: data
+  files:
+  - relpath: processed/.gitkeep
+    md5: d41d8cd98f00b204e9800998ecf8427e
+    size: 0
+    cloud:
+      gs-data:
+        etag: 08b4bafdebfee183031001
+        version_id: '1705410943737140'
+  - relpath: processed/CIFAR10/test_dataset.pt
+    md5: fbf937286fdec6ce4979fad61a54bb59
+    size: 443636
+    cloud:
+      gs-data:
+        etag: 08c0a493ecfee183031001
+        version_id: '1705410944094784'
+  - relpath: processed/CIFAR10/test_targets.pt
+    md5: c87cf35555d62b2bf130acf383a15aca
+    size: 1844
+    cloud:
+      gs-data:
+        etag: 08c7958aecfee183031001
+        version_id: '1705410943945415'
+  - relpath: processed/CIFAR10/train_dataset.pt
+    md5: 8c28bb958b74502db3cfef1378cf92f8
+    size: 2207864
+    cloud:
+      gs-data:
+        etag: 08e9cfefecfee183031001
+        version_id: '1705410945607657'
+  - relpath: processed/CIFAR10/train_targets.pt
+    md5: bdbc4fbfd9b448b8336f13f6d9e5f8d5
+    size: 5048
+    cloud:
+      gs-data:
+        etag: 0880968aecfee183031001
+        version_id: '1705410943945472'
+  - relpath: raw/.gitkeep
+    md5: d41d8cd98f00b204e9800998ecf8427e
+    size: 0
+    cloud:
+      gs-data:
+        etag: 08858c83ecfee183031001
+        version_id: '1705410943829509'
+  - relpath: raw/CIFAR10/cifar-10-batches-py/batches.meta
+    md5: 5ff9c542aee3614f3951f8cda6e48888
+    size: 158
+    cloud:
+      gs-data:
+        etag: 08f8e189ecfee183031001
+        version_id: '1705410943938808'
+  - relpath: raw/CIFAR10/cifar-10-batches-py/data_batch_1
+    md5: c99cafc152244af753f735de768cd75f
+    size: 31035704
+    cloud:
+      gs-data:
+        etag: 089c9ea1f5fee183031001
+        version_id: '1705410963197724'
+  - relpath: raw/CIFAR10/cifar-10-batches-py/data_batch_2
+    md5: d4bba439e000b95fd0a9bffe97cbabec
+    size: 31035320
+    cloud:
+      gs-data:
+        etag: 08a5c1baf3fee183031001
+        version_id: '1705410959417509'
+  - relpath: raw/CIFAR10/cifar-10-batches-py/data_batch_3
+    md5: 54ebc095f3ab1f0389bbae665268c751
+    size: 31035999
+    cloud:
+      gs-data:
+        etag: 08c9e4fff1fee183031001
+        version_id: '1705410956358217'
+  - relpath: raw/CIFAR10/cifar-10-batches-py/data_batch_4
+    md5: 634d18415352ddfa80567beed471001a
+    size: 31035696
+    cloud:
+      gs-data:
+        etag: 08c98fd4effee183031001
+        version_id: '1705410951448521'
+  - relpath: raw/CIFAR10/cifar-10-batches-py/data_batch_5
+    md5: 482c414d41f54cd18b22e5b47cb7c3cb
+    size: 31035623
+    cloud:
+      gs-data:
+        etag: 08bfeed8effee183031001
+        version_id: '1705410951526207'
+  - relpath: raw/CIFAR10/cifar-10-batches-py/readme.html
+    md5: 82949b010606e8171045e61c60921d12
+    size: 88
+    cloud:
+      gs-data:
+        etag: 089e968aecfee183031001
+        version_id: '1705410943945502'
+  - relpath: raw/CIFAR10/cifar-10-batches-py/test_batch
+    md5: 40351d587109b95175f43aff81a1287e
+    size: 31035526
+    cloud:
+      gs-data:
+        etag: 088e8aadf3fee183031001
+        version_id: '1705410959197454'
+  - relpath: raw/CIFAR10/cifar-10-python.tar.gz
+    md5: c58f30108f718f92721af3b95e74349a
+    size: 170498071
+    cloud:
+      gs-data:
+        etag: 08a9d6b798ffe183031001
+        version_id: '1705411036965673'

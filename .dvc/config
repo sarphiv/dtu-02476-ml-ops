@@ -2,3 +2,4 @@
     remote = gs-data
 ['remote "gs-data"']
     url = gs://data-dtu-mlops-bucket/
+    version_aware = true

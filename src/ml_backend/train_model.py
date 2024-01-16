@@ -77,7 +77,7 @@ def train(cfg):
 
     # instantiate the logger
     logger = WandbLogger(
-        project=cfg.system.wandb_project, 
+        project=cfg.system.wandb_project,
         log_model=False,
         entity=cfg.system.wandb_entity,
         config=OmegaConf.to_container(cfg.training, resolve=True, throw_on_missing=True),

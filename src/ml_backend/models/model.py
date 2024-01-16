@@ -85,7 +85,7 @@ class BaseModel(pl.LightningModule):
 
             case _:
                 raise ValueError(f"Model type {self.model_type} is not supported")
-            
+
         return transform
 
     def create_nn_model(self, model_type: str, model_hypers) -> nn.Module:
@@ -110,7 +110,7 @@ class BaseModel(pl.LightningModule):
                     pretrained=model_hypers["pretrained"],
                     num_classes=10,
                     )
-            
+
             case "simple_mlp":
                 return create_mlp(
                     input_dim=model_hypers["input_img_height"] * model_hypers["input_img_width"] * 3,
@@ -118,7 +118,7 @@ class BaseModel(pl.LightningModule):
                     hidden_dim=model_hypers["hidden_dim"],
                     hidden_layers=model_hypers["hidden_layers"],
                 )
-            
+
             case _:
                 raise ValueError(f"Model type {model_type} is not supported")
 

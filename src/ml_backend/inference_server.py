@@ -7,20 +7,18 @@ from fastapi import FastAPI, UploadFile, File
 from hydra import initialize, compose
 
 from ml_backend.predict import predict_data_class, load_model_best
+from ml_backend.storage import load_from_bucket
 
-print(os.getcwd())
-
-# with initialize(config_path="../../configs", version_base="1.3"):
-#     cfg = compose(config_name="config")
-#     app = FastAPI()
-#     model = load_model_best(cfg)
 
 with initialize(config_path=os.environ.get("CONFIG_DIR", "../../configs"), version_base="1.3"):
-    print(os.getcwd())
     cfg = compose(config_name="config")
-    print(os.getcwd())
     app = FastAPI()
-    print(os.getcwd(), cfg.training.models.model_dir)
+    if cfg.system.load_model_from is not None:
+        # Create the directory and load the <model_type> folder into it
+        # os.makedirs("models", exist_ok=True)
+        load_from_bucket(cfg.system.load_model_from, cfg.system.file_name, "models")
+
+    # Instantiate the model
     model = load_model_best(cfg)
 
 

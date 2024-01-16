@@ -175,7 +175,6 @@ cython_debug/
 
 
 # Temporary files to ignore
-data/*
 **lightning_logs/
 outputs/
 wandb/
@@ -183,3 +182,7 @@ models/*
 
 # Secrets
 .env
+/data
+/models
+.vscode/launch.json
+gcp_key.json

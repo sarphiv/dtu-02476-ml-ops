@@ -2,6 +2,7 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
+EXPOSE 80
 ENV INFERENCE_API_URL=localhost:8000
 
 COPY requirements_website.txt requirements.txt

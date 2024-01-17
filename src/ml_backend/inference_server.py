@@ -3,8 +3,9 @@ from PIL import Image
 from http import HTTPStatus
 import os
 
-from fastapi import FastAPI, UploadFile, File
 from hydra import initialize, compose
+from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 
 from ml_backend.predict import predict_data_class, load_model_best
 from ml_backend.storage import load_from_bucket
@@ -13,6 +14,13 @@ from ml_backend.storage import load_from_bucket
 with initialize(config_path=os.environ.get("CONFIG_DIR", "../../configs"), version_base="1.3"):
     cfg = compose(config_name="config")
     app = FastAPI()
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     if cfg.system.load_model_from is not None:
         # Create the directory and load the <model_type> folder into it
         # os.makedirs("models", exist_ok=True)

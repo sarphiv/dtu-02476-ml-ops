@@ -2,7 +2,7 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-ENV PORT=80
+ENV PORT=443
 EXPOSE ${PORT}
 ENV INFERENCE_API_URL=localhost:8080
 

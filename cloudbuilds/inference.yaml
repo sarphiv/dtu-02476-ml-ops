@@ -18,6 +18,7 @@ steps:
   - 'europe-west1'
   - '--memory'
   - '3G'
+  - '--allow-unauthenticated'
 options:
   logging: CLOUD_LOGGING_ONLY
 images:

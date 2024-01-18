@@ -17,7 +17,7 @@ def load_from_bucket(bucket_name: str, file_name: str, local_path: str) -> None:
     """
     # If client credentials are local, load from file
     if os.path.exists("gcp_keys.json"):
-        client = storage.Client.from_service_account_json("gcp_key.json")
+        client = storage.Client.from_service_account_json("gcp_keys.json")
     # Else, assume running in GCP and load from environment
     else:
         client = storage.Client()

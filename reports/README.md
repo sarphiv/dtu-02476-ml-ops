@@ -184,7 +184,7 @@ Our configuration structure is hierarchical in that our global and default confi
 > Answer:
 
 --- question 6 fill here ---
-To ensure good code quality and format we have set up pre-commits, github actions as well as used GitHub flow and required peer review before merging into the main branch. 
+To ensure good code quality and format we have set up pre-commits, github actions as well as used GitHub flow and required peer review before merging into the main branch.
 As part of the github actions we verify the format using ruff and run our tests created using pytest. Consistent code improves readability, collaboration, and maintainability in larger projects, and helps reduce the possibility of bugs or issues.
 
 
@@ -405,6 +405,13 @@ cloud run, buckets, iam (service accounts), cloud build, triggers, artifact regi
 --- question 18 fill here ---GROUP ALL
 cloud run managed vms
 
+We used the compute engine to host
+
+ 1. a server used for running inference on a trained resnet18 model, and
+ 2. a server used to run a webpage where you can upload images, and these are then classified using the aforementioned model.
+
+We used triggers to build our docker images and deploy them using Cloud Run. Since we only used GCP for inference, we didn't use GPUs. We just asked for 4 GB of ram and 2 CPU's, and then Cloud Build took care of managing the instances.
+
 ### Question 19
 
 > **Insert 1-2 images of your GCP bucket, such that we can see what data you have stored in it.**
@@ -423,7 +430,9 @@ smiiiile *camera flash*
 > Answer:
 
 --- question 20 fill here ---
-*camera flash* https://console.cloud.google.com/gcr/images/dtu-mlops-project-64?project=dtu-mlops-project-64
+<!-- *camera flash* https://console.cloud.google.com/gcr/images/dtu-mlops-project-64?project=dtu-mlops-project-64 -->
+[this figure](figures/inference_container_registry.png)
+[this figure](figures/webpage_container_registry.png)
 
 ### Question 21
 
@@ -452,6 +461,10 @@ that's a lot of errors https://console.cloud.google.com/cloud-build/builds;regio
 --- question 22 fill here ---
 locally and cloud, cloudbuild and via docker containers
 WE GOT A WEBSITE TYRANOSAURUSREEEKT
+
+We only trained our model locally, and we deployed our trained model as an inference server both locally and on the cloud. We chose not to train our model on the cloud because we had the resources to train them locally, and thereby it reducecd waiting time.
+
+For our inference server we used Cloud Build to build the images, and we used Cloud Run to host the server. The build was triggered by pushes to the main branch on our GitHub repository. We used fastapi to create the interface to get predictions from the model, and then we created a webpage to use as the frontend for interaction with the user. To invoke the service, i.e. to get a prediction, a user would go to [https://website-server-ym6t3dqyaq-ew.a.run.app](https://website-server-ym6t3dqyaq-ew.a.run.app) and upload an image.
 
 ### Question 23
 
@@ -522,6 +535,19 @@ TO BE CONTINUED... [cost report](https://console.cloud.google.com/billing/012EBF
 This was a project focused on learning to use gcp, and thus the issues arose here,
 hydra,
 wsl - docker - gpu vs cpu
+
+In general our biggest struggles were related to
+
+ 1. Docker containers
+ 2. Google Cloud
+ 3. Experiment configurations
+
+Docker containers are great for guaranteeing that our experiments and deployed models can be distributed. However, in order to use it, we encountered a few problems. For one thing, we needed to make sure windows users had the correct distribution of WSL, and windows users with a GPU needed to install the nvidia container runtime. Another issue with docker was the fact that we needed to create the docker file that was able to use the gpu. We also needed to make sure that different processes could share memory in order to enable parallel data loading.
+
+For Google Cloud, we encountered multiple issues. In general Google Cloud worked pretty well and overall we had two different types of problems. One type was related to finding out which services to use and the other type was figuring out how to use them, and debugging it when it didn't work first try. The course material provided a great starting point in understanding what services to use use them to work together. Figuring out how to use the services for our specific application, we spent some time learning how to setup the different yaml files on our repo and using them in together with Google Cloud. Debugging would usually encompass stuff like getting the right permissions for the service account, using the appropriate regions, accessing the correct network port, allowing unauthenticated access to the webserver, storing the model and data, etc.
+
+A third struggle was using hydra in combination with fastapi when building the inference server. The problem is that hydra onyl uses relative paths. This became a problem when installing the package, because the training script was a part of the package, but the config files we stored outside the package. Therefore, when the package was installed, the relative locations of the train script and the config files was changed, and we needed to specify an environment variable containing the relative path from the package to the config files.
+
 
 ### Question 27
 

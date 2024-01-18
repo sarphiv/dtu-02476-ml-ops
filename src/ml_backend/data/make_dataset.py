@@ -18,7 +18,7 @@ def make_dataset(data_dir: str | Path = ".") -> None:
     """
     # Get the logger
     logger = get_ml_logger()
-    logger.INFO("Making the dataset")
+    logger.info("Making the dataset")
 
     # Create paths
     raw_path = Path(data_dir) / "data/raw/CIFAR10"

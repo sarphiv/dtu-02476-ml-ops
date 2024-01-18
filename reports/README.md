@@ -184,7 +184,7 @@ Our configuration structure is hierarchical in that our global and default confi
 > Answer:
 
 --- question 6 fill here ---
-To ensure good code quality and format we have set up pre-commits, github actions as well as used GitHub flow and required peer review before merging into the main branch. 
+To ensure good code quality and format we have set up pre-commits, github actions as well as used GitHub flow and required peer review before merging into the main branch.
 As part of the github actions we verify the format using ruff and run our tests created using pytest. Consistent code improves readability, collaboration, and maintainability in larger projects, and helps reduce the possibility of bugs or issues.
 
 
@@ -205,9 +205,7 @@ As part of the github actions we verify the format using ruff and run our tests 
 >
 > Answer:
 
---- question 7 fill here ---
-Pytest is not a new concept to us and we therefore only develop any tests as a proof of concept. We have two tests that together check if the data can be loaded correctly and that when it is loaded it is in the correct format. To challenge ourselves and to not let the tests modify our repository, we use `@pytest.fixture(scope="session")` Proof of concept, data tests
-larger forcus on cloud and deployment
+Pytest is not a new concept to us and therefore we only develop any tests as a proof of concept. We have two tests that together check if the data can be loaded correctly and that when it is loaded it is in the correct format (shape). To challenge ourselves we use `@pytest.fixture(scope="session")` so that we can test our data creation and manipulation without changing anything in our local repository and so that we do not need to store the data in GitHub.
 
 ### Question 8
 
@@ -222,10 +220,9 @@ larger forcus on cloud and deployment
 >
 > Answer:
 
---- question 8 fill here --- GROUP 1
-Maybe? Low coverage... refer to 7
-100% does not mean error free, just that the code ran in a test
+When using the `coverage` library we get a very high coverage (97%), because the `__name__=="__main__"` statement is never run. This is quite misleading as we are only testing 2 of our scripts. This means that because the other scripts are never run with our pytest, the coverage library does not detect that they contain any statements. If we used the test for anything else than a proof of concept we would have implemented tests to check for training the model, making inference with the model and our webserver, but we instead chose to focus on cloud deployment as this is new to us.
 
+This shows that both having 100% coverage does not mean that the code is error free, as you can obtain a 100% without actually having any tests. Further, if you actually have 100% coverage and you are testing all files this still won't necessarily mean that there are no errors in the code that is tested e.g. a method that can take any iterable might only be tested with lists, and might fail when using numpy arrays which could be done somewhere else in the code.
 ### Question 9
 
 > **Did you workflow include using branches and pull requests? If yes, explain how. If not, explain how branches and**
@@ -386,8 +383,9 @@ Container debugging
 >
 > Answer:
 
---- question 17 fill here ---
-cloud run, buckets, iam (service accounts), cloud build, triggers, artifact registry
+We have a fully developed continuous deployment pipeline that stores model snapshots and training data in a `GCP bucket`, has a `GCP trigger` that deploys our inference server and webpage to two different instances of `GCP run` when we push to our main branch on GitHub, to deploy to `GCP run` we first build an image (again with the `GCP trigger`) which is done with `GCP build` and is stored in `GCP container registry`, at last to access the `GCP bucket` our `GCP run` is using a IAM account that has access to viewing all data in our bucket.
+
+The only thing we do not use GCP for is training our model with `Vertex AI`, but as we chose a very simple ML problem there is no need for large scale training.
 
 ### Question 18
 
@@ -412,8 +410,8 @@ cloud run managed vms
 >
 > Answer:
 
---- question 19 fill here ---
-smiiiile *camera flash*
+[this figure](figures/bucket_models.png)
+[this figure](figures/bucket_data.png)
 
 ### Question 20
 
@@ -432,8 +430,7 @@ smiiiile *camera flash*
 >
 > Answer:
 
---- question 21 fill here ---
-that's a lot of errors https://console.cloud.google.com/cloud-build/builds;region=europe-west1?referrer=search&project=dtu-mlops-project-64
+[this figure](figures/cloud_build.png)
 
 ### Question 22
 
@@ -467,6 +464,7 @@ WE GOT A WEBSITE TYRANOSAURUSREEEKT
 > Answer:
 
 --- question 23 fill here ---
+
 built-in in monitoring from gcp and logging, no model monitoring, unable to detect drift because no new data... what could we have done
 
 ### Question 24

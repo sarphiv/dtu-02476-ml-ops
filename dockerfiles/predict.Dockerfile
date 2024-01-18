@@ -12,6 +12,7 @@ COPY src src
 COPY configs configs
 COPY pyproject.toml .
 COPY requirements.txt .
+# COPY gcp_key.json .
 
 # Install our package (this also installs the dependencies)
 RUN pip install .

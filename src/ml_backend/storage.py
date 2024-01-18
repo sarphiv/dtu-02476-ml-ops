@@ -16,7 +16,8 @@ def load_from_bucket(bucket_name: str, file_name: str, local_path: str) -> None:
         path to the local file
     """
     # Load the file
-    client = storage.Client() #.from_service_account_json("key.json")
+    # client = storage.Client.from_service_account_json("gcp_key.json")
+    client = storage.Client()
     bucket = client.get_bucket(bucket_name)
 
     # List all blobs in the specified directory and its subdirectories

@@ -184,8 +184,9 @@ Our configuration structure is hierarchical in that our global and default confi
 > Answer:
 
 --- question 6 fill here ---
-ruff, pre-commit, pytest, github actions
-Github Flow, branch name rules, PR review requirements
+To ensure good code quality and format we have set up pre-commits, github actions as well as used GitHub flow and required peer review before merging into the main branch. 
+As part of the github actions we verify the format using ruff and run our tests created using pytest. Consistent code improves readability, collaboration, and maintainability in larger projects, and helps reduce the possibility of bugs or issues.
+
 
 ## Version control
 

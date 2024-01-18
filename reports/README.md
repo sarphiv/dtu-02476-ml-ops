@@ -267,7 +267,7 @@ This workflow keeps the main branch in a working state, such that continuous dep
 > Answer:
 
 --- question 10 fill here ---
-We have used DVC to transfer our data and trained models to a GCS Bucket, where object versioning has been activated. It is especially important when dealing with dynamic datasets. Knowing which dataset corresponds to each model aids in understanding performance variations. Additionally, in scenarios where a new model performs worse after deployment, having version control facilitates efficient rollbacks to an old model that behaved better. This capability enhances our ability to identify and address issues fast, contributing to the overall robustness of the project. It also ensures reproducible results. 
+We have used DVC to transfer our data and trained models to a GCS Bucket, where object versioning has been activated. It is especially important when dealing with dynamic datasets. Knowing which dataset corresponds to each model aids in understanding performance variations. Additionally, in scenarios where a new model performs worse after deployment, having version control facilitates efficient rollbacks to an old model that behaved better. This capability enhances our ability to identify and address issues fast, contributing to the overall robustness of the project. It also ensures reproducible results.
 
 used it just to transfer data and models to the google cloud storage bucket, but we didn't have different versions of the vod
 - if data is changing -> more data along the way, we know which dataset correpsonds to each model.
@@ -452,12 +452,14 @@ Thus, to deploy a new model, do the following stesp:
 --- question 18 fill here ---GROUP ALL
 cloud run managed vms
 
-We used the compute engine to host
+We didn't use the Compute Engine API. Instead we used Cloud Run and Cloud Build to host and build docker containers in the following way.
+
+We used it to host
 
  1. a server used for running inference on a trained resnet18 model, and
  2. a server used to run a webpage where you can upload images, and these are then classified using the aforementioned model.
 
-We used triggers to build our docker images and deploy them using Cloud Run. Since we only used GCP for inference, we didn't use GPUs. We just asked for [4 GB of ram and 2 CPU's], and then Cloud Build took care of managing the instances.
+This means that we only used the compute engine indirectly, and the most heavy computing we performed was inference. Therefore, we didn't use GPUs. We just asked for [4 GB of ram and 2 CPU's], and then Cloud Build took care of managing the instances.
 
 ### Question 19
 
@@ -466,8 +468,8 @@ We used triggers to build our docker images and deploy them using Cloud Run. Sin
 >
 > Answer:
 
-[this figure](figures/bucket_models.png)
-[this figure](figures/bucket_data.png)
+[Bucket containing model snapshots](figures/bucket_models.png)
+[Bucket containing training/test data](figures/bucket_data.png)
 
 ### Question 20
 
@@ -488,7 +490,7 @@ We used triggers to build our docker images and deploy them using Cloud Run. Sin
 >
 > Answer:
 
-[this figure](figures/cloud_build.png)
+[Cloud build history](figures/cloud_build.png)
 
 ### Question 22
 
@@ -564,7 +566,7 @@ The total cost of the project was 0.43 dollars. We used two services, Cloud Stor
 >
 > Answer:
 
-As this is not a machine learning project we have had focus on the operations part of the course in this project. We therefore chose a simple image classification problem (CIFAR10) and chose to work with TIMM to use their pre-trained resnet models. Because resnet is still a large and slow model to train on CPU we chose to implement a simple MLP for debugging purposes. Our models are implemented in the pytorch lightning framework so that we can utilize their boilerplate coding and integrate with weights and biases easily. We use WandB for logging, but also for hyperparameter sweeps. Hydra is used to manage our configurations, which the WandB sweeps also utilize.
+As this is not a machine learning project we have had focus on the operations part of the course in this project. We therefore chose a simple image classification problem (CIFAR10) and chose to work with TIMM to use their pre-trained resnet models. Because resnet is still a large and slow model to train on CPU we chose to implement a simple MLP for development and debugging purposes. Our models are implemented in the pytorch lightning framework so that we can utilize their boilerplate coding and integrate with weights and biases easily. We use WandB for logging, but also for hyperparameter sweeps. Hydra is used to manage our configurations, which the WandB sweeps also utilize.
 
 When we inevitable ran into problems we have used the build in debugger in VS-code. To minimize development issues between our different systems we opted to do everything in containers and we use devcontainers for this purpose. Now the issue of the code running on any one of the group members system but failing on others is mitigated.
 

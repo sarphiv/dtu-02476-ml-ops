@@ -22,11 +22,11 @@ The initial model will be based upon `ResNet-18`. This model was chosen for its 
 # Installation for development
 There are two ways to get started with the project. The easy way is with devcontainers, which ensure a consistent environment. The classical approach is to install the project via the `pyproject.toml` file.
 
-1. Devcontainer
+1. Approach 1: Devcontainer (recommended)
     1. Install `Docker` (and NVIDIA's container runtime if applicable)
     2. Build and open the appropriate devcontainer (cpu vs. gpu-accelerated)
     3. Run `dvc pull`
-2. Pip
+2. Approach 2: Pip
     1. Run `pip install .[dev]`
     3. Run `dvc pull`
 

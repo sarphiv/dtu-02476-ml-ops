@@ -267,7 +267,7 @@ This workflow keeps the main branch in a working state, such that continuous dep
 > Answer:
 
 --- question 10 fill here ---
-We have used DVC to transfer our data and trained models to a GCS Bucket, where object versioning has been activated. It is especially important when dealing with dynamic datasets. Knowing which dataset corresponds to each model aids in understanding performance variations. Additionally, in scenarios where a new model performs worse after deployment, having version control facilitates efficient rollbacks to an old model that behaved better. This capability enhances our ability to identify and address issues fast, contributing to the overall robustness of the project. It also ensures reproducible results. 
+We have used DVC to transfer our data and trained models to a GCS Bucket, where object versioning has been activated. It is especially important when dealing with dynamic datasets. Knowing which dataset corresponds to each model aids in understanding performance variations. Additionally, in scenarios where a new model performs worse after deployment, having version control facilitates efficient rollbacks to an old model that behaved better. This capability enhances our ability to identify and address issues fast, contributing to the overall robustness of the project. It also ensures reproducible results.
 
 used it just to transfer data and models to the google cloud storage bucket, but we didn't have different versions of the vod
 - if data is changing -> more data along the way, we know which dataset correpsonds to each model.
@@ -563,6 +563,8 @@ The total cost of the project was 0.43 dollars. We used two services, Cloud Stor
 > *Whenever we commit code and puch to github, it auto triggers ... and ... . From there the diagram shows ...*
 >
 > Answer:
+
+[this figure](figures/overview.png)
 
 As this is not a machine learning project we have had focus on the operations part of the course in this project. We therefore chose a simple image classification problem (CIFAR10) and chose to work with TIMM to use their pre-trained resnet models. Because resnet is still a large and slow model to train on CPU we chose to implement a simple MLP for debugging purposes. Our models are implemented in the pytorch lightning framework so that we can utilize their boilerplate coding and integrate with weights and biases easily. We use WandB for logging, but also for hyperparameter sweeps. Hydra is used to manage our configurations, which the WandB sweeps also utilize.
 

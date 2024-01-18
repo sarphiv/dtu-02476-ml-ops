@@ -17,7 +17,7 @@ steps:
   - '--region'
   - 'europe-west1'
   - '--memory'
-  - '3G'
+  - '6G'
   - '--max-instances'
   - '1'
   - '--allow-unauthenticated'

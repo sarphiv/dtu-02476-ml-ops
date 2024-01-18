@@ -532,7 +532,14 @@ The total cost of the project was 0.43 dollars. We used two services, Cloud Stor
 >
 > Answer:
 
---- question 25 fill here --- GROUP ALL
+As this is not a machine learning project we have had focus on the operations part of the course in this project. We therefore chose a simple image classification problem (CIFAR10) and chose to work with TIMM to use their pre-trained resnet models. Because resnet is still a large and slow model to train on CPU we chose to implement a simple MLP for debugging purposes. Our models are implemented in the pytorch lightning framework so that we can utilize their boilerplate coding and integrate with weights and biases easily. We use WandB for logging, but also for hyperparameter sweeps. Hydra is used to manage our configurations, which the WandB sweeps also utilize.
+
+When we inevitable ran into problems we have used the build in debugger in VS-code. To minimize development issues between our different systems we opted to do everything in containers and we use devcontainers for this purpose. Now the issue of the code running on any one of the group members system but failing on others is mitigated.
+
+We use git and dvc for version control, here all code is stored in github while larger files (data and model snapshots) are stored in a GCS bucket. This enables us to work together on the project. To maintain a main branch where everything is working, all collaborators work on feature branches and needs to pass all pytests, ruff and pre-commit in github actions and have the approval of at least one other group member before the feature is added to the main branch. Version control for our data is not really relevant in this small project because we have no intentions in changing the data as is described earlier.
+
+We train our models locally and push the model snapshots to the corresponding GCS bucket, but the deployment is done via a continuous deployment in GCP pipeline described earlier. Whenever any code is pushed to the main branch in the github repository a cloud build trigger builds both our front end server and our backend inference server images with the newest code. These are then deployed with cloud run and the newest version of the user interface is available. The user is sent the website to run locally and the website then use fastAPI to post a picture that the user chooses to our inference server.
+
 
 ### Question 26
 

@@ -236,9 +236,10 @@ This shows that both having 100% coverage does not mean that the code is error f
 >
 > Answer:
 
---- question 9 fill here ---
-branch names, PR, reviews, automated integration testing
--> nice that main works -> easy to understand what is added and when
+The workflow was based upon GitHub Flow, which is a lightweight version of Git flow. This workflow was enforced via settings on GitHub and peer pressure. Every new feature or fix requires the creation of a new branch.
+Branch names have the type as a prefix e.g: "feat-" or "fix-". To merge changes into the main branch, a pull request must be submitted, pass continuous integration, and be approved by at least 1 other member after review.
+
+This workflow keeps the main branch in a working state, such that continuous deployment can be set up to automatically trigger upon changes to the main branch.
 
 ### Question 10
 
@@ -274,9 +275,15 @@ used it just to transfer data and models to the google cloud bucket, but we didn
 >
 > Answer:
 
---- question 11 fill here ---
-pytest, ruff, building, caching, link to one of our successful flows (with caching)
-- If this was package we would have tested operation systems and python versions...
+We have pre-commit set up to automatically run fix/detect easily correctable issues such as mixed line ending, unfixed merge conflicts, or staged secrets. Ruff has also been hooked into pre-commit to enforce mild adherence to PEP8 (linting). This has been integrated into the devcontainer to ensure it is run locally before committing.
+We also have some unit tests set up via PyTest, which are integrated into our IDEs to enable easy running and checking.
+
+To ensure our checks above are run before changes to the main branch, we also run them via GitHub Actions once code has been pushed. This is useful in cases where someone has somehow messed up their devcontainer, is developing outside the devcontainer, or simply forgot to run pytest.
+
+To speed up our continuous integration, we make use of caching on GitHub Actions to avoid downloading our package requirements repeatedly - this is implemented via the setup-python@v4 workflow, which implements it via a one-liner. We do not test across multiple platforms nor Python versions, because we are not developing a package to be distributed through PyPi. Our applications are deployed via containers to GCP, so our runtime environments are controlled and known.
+
+One of our runs can be seen [here](https://github.com/sarphiv/dtu-02476-ml-ops/actions/runs/7555077753)
+
 
 ## Running code and tracking experiments
 
@@ -312,14 +319,14 @@ We used hydra to organize the config files. The config files have been organized
 >
 > Answer:
 
---- question 13 fill here --- GROUP 2
-seeds, version controlled configs, wandb
+--- question 13 fill here ---
+We have used containers to ensure reproducibility and consistency across different environments. To secure that no information is lost, and the experiments are reproducible we have made use of config files and used weights and biases for logging (version-controlled configs). The config files also contain which seed has been used in the experiment. Whenever an experiment is run weights and biases creates a folder with files containing the requirements, configs, and model summary. The folders are placed locally and online. By storing it online we ensure that no information is lost.
 
 ### Question 14
 
 > **Upload 1 to 3 screenshots that show the experiments that you have done in W&B (or another experiment tracking**
 > **service of your choice). This may include loss graphs, logged images, hyperparameter sweeps etc. You can take**
-> **inspiration from [this figure](figures/wandb.png). Explain what metrics you are tracking and why they are**
+> **inspiration from [this figure](figures/examples/wandb.png). Explain what metrics you are tracking and why they are**
 > **important.**
 >
 > Answer length: 200-300 words + 1 to 3 screenshots.
@@ -331,8 +338,11 @@ seeds, version controlled configs, wandb
 > Answer:
 
 --- question 14 fill here ---
-sweeps
-alberte and lauge do stuff that none of us know about on wandb
+![1. Loss and accuracy graphs for training and validation in W&B](figures/wb_experiment_loss.png)
+![2. Table displaying the hyperparameters used for the experiment.](figures/wb_experiment_config.png)
+![3. Sweep over batch size and learning rate](figures/wb_sweep.png)
+
+The first two figures display information about a single experiment and the third are produced by a sweep. Figure 1 shows the loss and accuracy graphs for both training and validation for an experiment inside our sweep. It is important to track for both training and validation to ensure that the model does not overfit. We have tracked both accuracy and loss, since accuracy gives a good overview, while loss is used when determining model performance. The table in figure 2 displays a proportion of the config file, that has been logged. The last figure displays a sweep where we have used Bayesian hyperparameter optimization of learning rate and batch size. The objective of the optimization is to minimize the validation loss. The figure shows that the validation loss is low, when the batch size is around 130 and the learning rate is close to 0.0001.
 
 ### Question 15
 
@@ -347,8 +357,15 @@ alberte and lauge do stuff that none of us know about on wandb
 >
 > Answer:
 
---- question 15 fill here ---
-devcontainer, and also the trainer image, link to dockerfile
+For our training experiments we have a dockerfile made specifically training. We, however, only used this once, because it was faster and cheaper to train our models locally instead of on GCP Vertex AI. Our experiments have therefore been run directly in our devcontainer, which uses our devcontainer dockerfile.
+
+Our `dev.Dockerfile` simply sets up system packages, a non-root user, and then it caches the package requirements as an image layer. The `devcontainer.json` then sets up the rest of the development tools and settings.
+
+For the inference server to be deployed we have a separate dockerfile. This server is simply run with `docker run -p <host-port>:8080 inference-server:latest`. Our frontend website image is also simply run with `docker run -p <host-port>:80 website:latest`.
+
+[dev.Dockerfile](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/dockerfiles/dev.Dockerfile)
+[devcontainer.json](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/.devcontainer/gpu/devcontainer.json)
+
 
 ### Question 16
 
@@ -403,6 +420,13 @@ The only thing we do not use GCP for is training our model with `Vertex AI`, but
 --- question 18 fill here ---GROUP ALL
 cloud run managed vms
 
+We used the compute engine to host
+
+ 1. a server used for running inference on a trained resnet18 model, and
+ 2. a server used to run a webpage where you can upload images, and these are then classified using the aforementioned model.
+
+We used triggers to build our docker images and deploy them using Cloud Run. Since we only used GCP for inference, we didn't use GPUs. We just asked for 4 GB of ram and 2 CPU's, and then Cloud Build took care of managing the instances.
+
 ### Question 19
 
 > **Insert 1-2 images of your GCP bucket, such that we can see what data you have stored in it.**
@@ -421,7 +445,9 @@ cloud run managed vms
 > Answer:
 
 --- question 20 fill here ---
-*camera flash* https://console.cloud.google.com/gcr/images/dtu-mlops-project-64?project=dtu-mlops-project-64
+<!-- *camera flash* https://console.cloud.google.com/gcr/images/dtu-mlops-project-64?project=dtu-mlops-project-64 -->
+[this figure](figures/inference_container_registry.png)
+[this figure](figures/webpage_container_registry.png)
 
 ### Question 21
 
@@ -449,6 +475,10 @@ cloud run managed vms
 --- question 22 fill here ---
 locally and cloud, cloudbuild and via docker containers
 WE GOT A WEBSITE TYRANOSAURUSREEEKT
+
+We only trained our model locally, and we deployed our trained model as an inference server both locally and on the cloud. We chose not to train our model on the cloud because we had the resources to train them locally, and thereby it reducecd waiting time.
+
+For our inference server we used Cloud Build to build the images, and we used Cloud Run to host the server. The build was triggered by pushes to the main branch on our GitHub repository. We used fastapi to create the interface to get predictions from the model, and then we created a webpage to use as the frontend for interaction with the user. To invoke the service, i.e. to get a prediction, a user would go to [https://website-server-ym6t3dqyaq-ew.a.run.app](https://website-server-ym6t3dqyaq-ew.a.run.app) and upload an image.
 
 ### Question 23
 
@@ -479,8 +509,8 @@ built-in in monitoring from gcp and logging, no model monitoring, unable to dete
 >
 > Answer:
 
---- question 24 fill here ---ASK HIM TOMORROW
-TO BE CONTINUED... [cost report](https://console.cloud.google.com/billing/012EBF-8DA735-464455/reports%253BtimeRange%253DCUSTOM_RANGE%253Bfrom%253D2024-01-02%253Bto%253D2024-01-17%253Bprojects%253Ddtu-mlops-project-64%253Bcredits%253DNONE%253BnegotiatedSavings%253Dfalse?organizationId%253D247085167883%2526project%253Ddtu-mlops-project-64)
+--- question 24 fill here ---
+The total cost of the project was 0.43 dollars. We used two services, Cloud Storage and Cloud Run. Cloud Storage was most expensive with a cost of 0.32 dollars.
 
 
 ## Overall discussion of project
@@ -521,6 +551,19 @@ This was a project focused on learning to use gcp, and thus the issues arose her
 hydra,
 wsl - docker - gpu vs cpu
 
+In general our biggest struggles were related to
+
+ 1. Docker containers
+ 2. Google Cloud
+ 3. Experiment configurations
+
+Docker containers are great for guaranteeing that our experiments and deployed models can be distributed. However, in order to use it, we encountered a few problems. For one thing, we needed to make sure windows users had the correct distribution of WSL, and windows users with a GPU needed to install the nvidia container runtime. Another issue with docker was the fact that we needed to create the docker file that was able to use the gpu. We also needed to make sure that different processes could share memory in order to enable parallel data loading.
+
+For Google Cloud, we encountered multiple issues. In general Google Cloud worked pretty well and overall we had two different types of problems. One type was related to finding out which services to use and the other type was figuring out how to use them, and debugging it when it didn't work first try. The course material provided a great starting point in understanding what services to use use them to work together. Figuring out how to use the services for our specific application, we spent some time learning how to setup the different yaml files on our repo and using them in together with Google Cloud. Debugging would usually encompass stuff like getting the right permissions for the service account, using the appropriate regions, accessing the correct network port, allowing unauthenticated access to the webserver, storing the model and data, etc.
+
+A third struggle was using hydra in combination with fastapi when building the inference server. The problem is that hydra onyl uses relative paths. This became a problem when installing the package, because the training script was a part of the package, but the config files we stored outside the package. Therefore, when the package was installed, the relative locations of the train script and the config files was changed, and we needed to specify an environment variable containing the relative path from the package to the config files.
+
+
 ### Question 27
 
 > **State the individual contributions of each team member. This is required information from DTU, because we need to**
@@ -536,5 +579,6 @@ wsl - docker - gpu vs cpu
 >
 > Answer:
 
---- question 27 fill here ---
-Make the chat bot write a generic version of this
+Because all members of the group wanted to learn everything, a lot of the work has been rather collaborative. A lot of the time, we have even had 5 people standing behind the same laptop screen, or smaller groups developing together via Live Share or classical pair programming. Even when people were occasionally working on their own features, it has always been with discussions and help from the others. And even if someone was not part of a change, because of our workflow, they still ended up affecting the change because of the enforced code review - and through that they effected changes to the code.
+
+All members therefore contributed approximately equally on everything.

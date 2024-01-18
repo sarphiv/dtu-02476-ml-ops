@@ -1,8 +1,6 @@
 name: "Run formatting and tests"
 
 on:
-  push:
-    branches: '*' # [ main, feat-* ]
   pull_request:
     branches: [ main ]
 

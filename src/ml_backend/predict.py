@@ -28,7 +28,7 @@ def load_model(model_path: str, device: str = "cpu") -> BaseModel:
     --------
     `BaseModel` object
     """
-    # If the model
+    # If the model is given as a txt file, load the path from the txt file
     if model_path[-4:] == ".txt":
         model_path = open(model_path, "r").read().strip()
 
@@ -135,7 +135,6 @@ def main(cfg):
     transforms = model.get_transform()
     _, test_dataset = load_dataset(transform=transforms)
 
-    print(model.idx_to_class.keys())
     # Predict
     predictions = model(test_dataset[0][0].unsqueeze(0)).argmax(1).item()
     print(predictions, test_dataset[0][1])

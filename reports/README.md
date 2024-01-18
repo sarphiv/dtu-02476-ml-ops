@@ -383,8 +383,8 @@ Our `dev.Dockerfile` simply sets up system packages, a non-root user, and then i
 
 For the inference server to be deployed we have a separate dockerfile. This server is simply run with `docker run -p <host-port>:8080 inference-server:latest`. Our frontend website image is also simply run with `docker run -p <host-port>:80 website:latest`.
 
-[dev.Dockerfile](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/dockerfiles/dev.Dockerfile)
-[devcontainer.json](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/.devcontainer/gpu/devcontainer.json)
+- [dev.Dockerfile](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/dockerfiles/dev.Dockerfile)
+- [devcontainer.json](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/.devcontainer/gpu/devcontainer.json)
 
 
 ### Question 16
@@ -400,10 +400,12 @@ For the inference server to be deployed we have a separate dockerfile. This serv
 >
 > Answer:
 
---- question 16 fill here ---GROUP 1
-debugger in vs-code, attach debugger to different process and then it just worked
-cloud console logs
-Container debugging
+As the focus was on CI, CD, and cloud no profiling was done as the code was already fast enough, so it was not a priority.
+When we encountered bugs we used the debugger integration in VSCode to debug our application via breakpoints and the debug console. 
+We also made use of the debugger's ability to attach to running processes such that we could debug the frontend, which was started via uvicorn.
+When the cloud builds and/or deployments failed, we investigated the errors via the cloud console logs. 
+In a few occasions we also gained shell access to running containers such that we could debug file system issues.
+
 
 ## Working in the cloud
 

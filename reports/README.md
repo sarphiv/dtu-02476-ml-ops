@@ -179,10 +179,9 @@ These files are maintained manually because in very rare cases `pipreqs` fails.
 
 We have modified the cookiecutter template to have a `src`-based structure instead. This is to separate our source code from the other folders in our project for both clarity and to avoid naming conflicts. We also have two different modules in our project: the ML backend, and the website frontend, which this structure helps to highlight.
 
-[do we expplain our use of devcontainers? - this should probably be done in question 4]
 We have added a `.devcontainer` folder for our devcontainer specification to ensure that we all work in the same environment. We have added a `cloudbuilds` folder for integration with GCP cloud builds. We have not used the `docs` and `notebooks` directories, nor the `Makefile`, so these have all been removed. Our `pyproject.toml` has been modified appropriately to enable installation of our project.
 
-Our tests are placed in their associated modules in a `tests` folder. This is to avoid having to duplicate and maintain the source code structure in a separate `tests` folder in the project root directory. PyTest supports this structure with minimal changes to the `pyproject.toml` file.
+Our tests are placed in their associated modules in a `tests` folder. This is to avoid having to duplicate and maintain the source code structure in a separate `tests` folder in the project root directory.
 
 Our configuration structure is hierarchical in that our global and default configurations are described first, and then subsettings set by config files in directories further down. In our case, we have different configurations depending upon what model type is currently used (ResNet18 vs. Simple MLP).
 
@@ -452,12 +451,14 @@ Thus, to deploy a new model, do the following stesp:
 --- question 18 fill here ---GROUP ALL
 cloud run managed vms
 
-We used the compute engine to host
+We didn't use the Compute Engine API. Instead we used Cloud Run and Cloud Build to host and build docker containers in the following way.
+
+We used it to host
 
  1. a server used for running inference on a trained resnet18 model, and
  2. a server used to run a webpage where you can upload images, and these are then classified using the aforementioned model.
 
-We used triggers to build our docker images and deploy them using Cloud Run. Since we only used GCP for inference, we didn't use GPUs. We just asked for [4 GB of ram and 2 CPU's], and then Cloud Build took care of managing the instances.
+This means that we only used the compute engine indirectly, and the most heavy computing we performed was inference. Therefore, we didn't use GPUs. We just asked for [4 GB of ram and 2 CPU's], and then Cloud Build took care of managing the instances.
 
 ### Question 19
 
@@ -466,8 +467,8 @@ We used triggers to build our docker images and deploy them using Cloud Run. Sin
 >
 > Answer:
 
-[this figure](figures/bucket_models.png)
-[this figure](figures/bucket_data.png)
+![Bucket containing model snapshots](figures/bucket_models.png)
+![Bucket containing training/test data](figures/bucket_data.png)
 
 ### Question 20
 
@@ -478,8 +479,7 @@ We used triggers to build our docker images and deploy them using Cloud Run. Sin
 
 --- question 20 fill here ---
 <!-- *camera flash* https://console.cloud.google.com/gcr/images/dtu-mlops-project-64?project=dtu-mlops-project-64 -->
-[Inference server (backend) container registry](figures/inference_container_registry.png)
-[Webpage server (frontend) container registry](figures/webpage_container_registry.png)
+![Website server (frontend, top) and inference server (backend, bottom) container registry](figures/container_registries.png)
 
 ### Question 21
 
@@ -488,7 +488,7 @@ We used triggers to build our docker images and deploy them using Cloud Run. Sin
 >
 > Answer:
 
-[this figure](figures/cloud_build.png)
+![Cloud build history](figures/cloud_build.png)
 
 ### Question 22
 
@@ -564,15 +564,15 @@ The total cost of the project was 0.43 dollars. We used two services, Cloud Stor
 >
 > Answer:
 
-[this figure](figures/overview.png)
+![this figure](figures/overview.svg)
 
-As this is not a machine learning project we have had focus on the operations part of the course in this project. We therefore chose a simple image classification problem (CIFAR10) and chose to work with TIMM to use their pre-trained resnet models. Because resnet is still a large and slow model to train on CPU we chose to implement a simple MLP for debugging purposes. Our models are implemented in the pytorch lightning framework so that we can utilize their boilerplate coding and integrate with weights and biases easily. We use WandB for logging, but also for hyperparameter sweeps. Hydra is used to manage our configurations, which the WandB sweeps also utilize.
+As the main focus of this course is the operations part of machine learnin operations, we chose to work with a simple image classification problem (CIFAR10). Our model of choice is a pretrained ResNet-18 from TIMM. For development and debugging purposes, however, we also implemented a simple MLP. Our models are wrappped in the pytorch lightning framework such that we can utilize their boilerplate coding and integrate with Weights & Biases easily. We use WandB for metrics logging, but also for hyperparameter sweeps. Hydra is used to manage our configurations, which the WandB sweeps also utilize.
 
-When we inevitable ran into problems we have used the build in debugger in VS-code. To minimize development issues between our different systems we opted to do everything in containers and we use devcontainers for this purpose. Now the issue of the code running on any one of the group members system but failing on others is mitigated.
+We used the built-in debugger in VS-code for debugging. To minimize development issues between our different systems we opted to do everything in containers and we use devcontainers for this purpose. Now the issue of the code running on any one of the group members system but failing on others is mitigated.
 
-We use git and dvc for version control, here all code is stored in github while larger files (data and model snapshots) are stored in a GCS bucket. This enables us to work together on the project. To maintain a main branch where everything is working, all collaborators work on feature branches and needs to pass all pytests, ruff and pre-commit in github actions and have the approval of at least one other group member before the feature is added to the main branch. Version control for our data is not really relevant in this small project because we have no intentions in changing the data as is described earlier.
+We use git and dvc for version control, here all code is stored in github while larger files (data and model snapshots) are stored in a GCS bucket. This enables us to work together on the project. To maintain a main branch where everything is working, all collaborators work on feature branches which are merged into main using pull requests. All pull requests must pass all pytests, ruff and pre-commit in github actions and have the approval of at least one other group member before the feature is added to the main branch. Version control for our data is not really relevant in this small project because we have no intentions in changing the data as is described earlier. TODO is this described earlier??
 
-We train our models locally and push the model snapshots to the corresponding GCS bucket, but the deployment is done via a continuous deployment in GCP pipeline described earlier. Whenever any code is pushed to the main branch in the github repository a cloud build trigger builds both our front end server and our backend inference server images with the newest code. These are then deployed with cloud run and the newest version of the user interface is available. The user is sent the website to run locally and the website then use fastAPI to post a picture that the user chooses to our inference server.
+We train our models locally and push the model snapshots to the corresponding GCS bucket (using dvc), but the deployment is done via a continuous deployment in GCP pipeline described earlier. Whenever anything is pushed to the main branch in the github repository a cloud build trigger builds both our front end server and our backend inference server images with the newest code. These are then deployed with cloud run and the newest version of the user interface is available. The website runs locally on the end users machine and the website then uses fastAPI to post a picture that the user chooses to our inference server.
 
 
 ### Question 26
@@ -598,11 +598,11 @@ In general our biggest struggles were related to
  2. Google Cloud
  3. Experiment configurations
 
-Docker containers are great for guaranteeing that our experiments and deployed models can be distributed. However, in order to use it, we encountered a few problems. For one thing, we needed to make sure windows users had the correct distribution of WSL, and windows users with a GPU needed to install the nvidia container runtime. Another issue with docker was the fact that we needed to create the docker file that was able to use the gpu. We also needed to make sure that different processes could share memory in order to enable parallel data loading.
+Docker containers are great for guaranteeing that our experiments and deployed models can be distributed. However, in order to use it, we encountered a few problems. For one thing, we needed to make sure non-linux users had the correct distribution of WSL, and for enabling GPU they needed to install the nvidia container runtime. Another issue with docker was the fact that we needed to create the docker file that was able to use the gpu. We also needed to make sure that different processes could share memory in order for parallel data loading to work.
 
-For Google Cloud, we encountered multiple issues. In general Google Cloud worked pretty well and overall we had two different types of problems. One type was related to finding out which services to use and the other type was figuring out how to use them, and debugging it when it didn't work first try. The course material provided a great starting point in understanding what services to use use them to work together. Figuring out how to use the services for our specific application, we spent some time learning how to setup the different yaml files on our repo and using them in together with Google Cloud. Debugging would usually encompass stuff like getting the right permissions for the service account, using the appropriate regions, accessing the correct network port, allowing unauthenticated access to the webserver, storing the model and data, etc.
+For Google Cloud, we encountered multiple issues. In general Google Cloud worked well and overall we had two different types of problems. One type was related to finding out which services to use and the other type was figuring out how to use them, and debugging it when it didn't work first try. The course material provided a great starting point in understanding what services to use, and how to use them together. Figuring out how to use the services for our specific application, we spent some time learning how to setup the different configurations for `GCP`. Debugging would usually encompass stuff like getting the right permissions for the service account, using the appropriate regions, accessing the correct network port, allowing unauthenticated access to the webserver, storing the model and data, etc.
 
-A third struggle was using hydra in combination with fastapi when building the inference server. The problem is that hydra onyl uses relative paths. This became a problem when installing the package, because the training script was a part of the package, but the config files we stored outside the package. Therefore, when the package was installed, the relative locations of the train script and the config files was changed, and we needed to specify an environment variable containing the relative path from the package to the config files.
+A third struggle was using hydra in combination with fastapi when building the inference server. The problem is that hydra only uses relative paths. This became a problem when installing the package, because the training script was a part of the package, but the config files we stored outside the package. Therefore, when the package was installed, the relative locations of the train script and the config files was changed, and we needed to specify an environment variable containing the relative path from the package to the config files.
 
 
 ### Question 27
@@ -620,6 +620,6 @@ A third struggle was using hydra in combination with fastapi when building the i
 >
 > Answer:
 
-Because all members of the group wanted to learn everything, a lot of the work has been rather collaborative. A lot of the time, we have even had 5 people standing behind the same laptop screen, or smaller groups developing together via Live Share or classical pair programming. Even when people were occasionally working on their own features, it has always been with discussions and help from the others. And even if someone was not part of a change, because of our workflow, they still ended up affecting the change because of the enforced code review - and through that they effected changes to the code.
+Because all members of the group wanted to learn everything, a lot of the work has been rather collaborative. A lot of the time, we have even had 5 people standing behind the same laptop screen, or smaller groups developing together via Live Share or classical pair programming. Even when people were occasionally working on their own features, it has always been with discussions and help from the others. And even if someone was not part of a change, because of our workflow, they still ended up affecting the change because of the enforced code review - and through the fact that they effected changes to the code.
 
 All members therefore contributed approximately equally on everything.

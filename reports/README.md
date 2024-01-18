@@ -322,14 +322,14 @@ We used hydra to organize the config files. The config files have been organized
 >
 > Answer:
 
---- question 13 fill here --- GROUP 2
-seeds, version controlled configs, wandb
+--- question 13 fill here --- 
+We have used containers to ensure reproducibility and consistency across different environments. To secure that no information is lost, and the experiments are reproducible we have made use of config files and used weights and biases for logging (version-controlled configs). The config files also contain which seed has been used in the experiment. Whenever an experiment is run weights and biases creates a folder with files containing the requirements, configs, and model summary. The folders are placed locally and online. By storing it online we ensure that no information is lost.      
 
 ### Question 14
 
 > **Upload 1 to 3 screenshots that show the experiments that you have done in W&B (or another experiment tracking**
 > **service of your choice). This may include loss graphs, logged images, hyperparameter sweeps etc. You can take**
-> **inspiration from [this figure](figures/wandb.png). Explain what metrics you are tracking and why they are**
+> **inspiration from [this figure](figures/examples/wandb.png). Explain what metrics you are tracking and why they are**
 > **important.**
 >
 > Answer length: 200-300 words + 1 to 3 screenshots.
@@ -341,8 +341,11 @@ seeds, version controlled configs, wandb
 > Answer:
 
 --- question 14 fill here ---
-sweeps
-alberte and lauge do stuff that none of us know about on wandb
+![1. Loss and accuracy graphs for training and validation in W&B](figures/wb_experiment_loss.png)
+![2. Table displaying the hyperparameters used for the experiment.](figures/wb_experiment_config.png)
+![3. Sweep over batch size and learning rate](figures/wb_sweep.png)
+
+The first two figures display information about a single experiment and the third are produced by a sweep. Figure 1 shows the loss and accuracy graphs for both training and validation for an experiment inside our sweep. It is important to track for both training and validation to ensure that the model does not overfit. We have tracked both accuracy and loss, since accuracy gives a good overview, while loss is used when determining model performance. The table in figure 2 displays a proportion of the config file, that has been logged. The last figure displays a sweep where we have used Bayesian hyperparameter optimization of learning rate and batch size. The objective of the optimization is to minimize the validation loss. The figure shows that the validation loss is low, when the batch size is around 130 and the learning rate is close to 0.0001.
 
 ### Question 15
 

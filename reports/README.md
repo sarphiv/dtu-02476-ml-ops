@@ -133,7 +133,6 @@ We used the third-party framework `timm` in our project. We used the framework's
 In spite of how nice `timm` is, we, however, also have a simple MLP model that is used for local development purposes. Some of our members do not have access to GPUs so running even a small model like ResNet-18 is prohibitively delaying for them while developing.
 
 
-
 ## Coding environment
 
 > In the following section we are interested in learning more about you local development environment.
@@ -152,7 +151,8 @@ In spite of how nice `timm` is, we, however, also have a simple MLP model that i
 > Answer:
 
 A new member would follow the installation instructions in the project `README.md` to install the project.
-The recommended way is to use devcontainers, this requires the new team member to have `Docker` installed on their system.
+The most simple way is to just install the package using pip, and then the requirements files will install the correct packages.
+The recommended way, however, is to use devcontainers. This requires the new team member to have `Docker` installed on their system.
 If they have a GPU, and they want to accelerate their processing they also need to install NVIDIA's container runtime.
 Afterwards they can just open the devcontainer, and the environment will automatically be setup for them.
 
@@ -177,12 +177,11 @@ These files are maintained manually because in very rare cases `pipreqs` fails.
 > *experiments.*
 > Answer:
 
-We have modified the cookiecutter template to have a `src`-based structure instead. This is to separate our source code from the other folders in our project for both clarity and to avoid naming conflicts. We also have two different modules in our project: the ML backend, and the website frontend, which this structure helps to highlight.
+We have modified the cookiecutter template towards a `src`-based structure. This clearly separates our source code from the rest of our project. Furthermore, it avoids naming conflicts, and highlights the fact that we also have two different modules in our project: the ML backend, and the website frontend.
 
-[do we expplain our use of devcontainers? - this should probably be done in question 4]
-We have added a `.devcontainer` folder for our devcontainer specification to ensure that we all work in the same environment. We have added a `cloudbuilds` folder for integration with GCP cloud builds. We have not used the `docs` and `notebooks` directories, nor the `Makefile`, so these have all been removed. Our `pyproject.toml` has been modified appropriately to enable installation of our project.
+We have added a `.devcontainer` folder for our devcontainer specification. We have added a `cloudbuilds` folder for integration with GCP cloud builds. `docs` and `notebooks` directories have been removed along with the `Makefile`, as these are not used. Our `pyproject.toml` has been modified appropriately to enable installation of our project.
 
-Our tests are placed in their associated modules in a `tests` folder. This is to avoid having to duplicate and maintain the source code structure in a separate `tests` folder in the project root directory. PyTest supports this structure with minimal changes to the `pyproject.toml` file.
+Our tests are placed in their associated modules in a `tests` folder. This is to avoid having to duplicate and maintain the source code structure in a separate `tests` folder in the project root directory. This required minimal changes to the `pyproject.toml` file.
 
 Our configuration structure is hierarchical in that our global and default configurations are described first, and then subsettings set by config files in directories further down. In our case, we have different configurations depending upon what model type is currently used (ResNet18 vs. Simple MLP).
 
@@ -195,7 +194,7 @@ Our configuration structure is hierarchical in that our global and default confi
 >
 > Answer:
 
---- question 6 fill here ---
+
 To ensure good code quality and format we have set up pre-commits, github actions as well as used GitHub flow and required peer review before merging into the main branch.
 As part of the github actions we verify the format using ruff and run our tests created using pytest. Consistent code improves readability, collaboration, and maintainability in larger projects, and helps reduce the possibility of bugs or issues.
 
@@ -235,6 +234,7 @@ Pytest is not a new concept to us and we therefore only develop tests as a proof
 When using the `coverage` library we get a very high coverage (97%), because the `__name__=="__main__"` statement is never run. This is quite misleading as we are only testing 2 of our scripts. This means that because the other scripts are never run with our pytest, the coverage library does not detect that they contain any statements. If we used the test for anything else than a proof of concept we would have implemented tests to check for training the model, making inference with the model and our webserver, but we instead chose to focus on cloud deployment as this is new to us.
 
 This shows that both having 100% coverage does not mean that the code is error free, as you can obtain a 100% without actually having any tests. Further, if you actually have 100% coverage and you are testing all files this still won't necessarily mean that there are no errors in the code that is tested e.g. a method that can take any iterable might only be tested with lists, and might fail when using numpy arrays which could be done somewhere else in the code.
+
 ### Question 9
 
 > **Did you workflow include using branches and pull requests? If yes, explain how. If not, explain how branches and**
@@ -266,14 +266,7 @@ This workflow keeps the main branch in a working state, such that continuous dep
 >
 > Answer:
 
---- question 10 fill here ---
-We have used DVC to transfer our data and trained models to a GCS Bucket, where object versioning has been activated. It is especially important when dealing with dynamic datasets. Knowing which dataset corresponds to each model aids in understanding performance variations. Additionally, in scenarios where a new model performs worse after deployment, having version control facilitates efficient rollbacks to an old model that behaved better. This capability enhances our ability to identify and address issues fast, contributing to the overall robustness of the project. It also ensures reproducible results.
-
-used it just to transfer data and models to the google cloud storage bucket, but we didn't have different versions of the vod
-- if data is changing -> more data along the way, we know which dataset correpsonds to each model.
-- when do things break
-- in case a new model appears worse once deployed, it allows rollbacks
--
+We have used DVC to transfer our data and trained models to a `GCS Bucket`, where object versioning has been activated. It is especially important when dealing with dynamic datasets. Knowing which dataset corresponds to each model aids in understanding performance variations. Additionally, in scenarios where a new model performs worse after deployment, having version control facilitates efficient rollbacks to an old model that behaved better. This capability enhances our ability to identify and address issues fast, contributing to the overall robustness of the project. It also ensures reproducible results.
 
 ### Question 11
 
@@ -316,7 +309,6 @@ One of our runs can be seen [here](https://github.com/sarphiv/dtu-02476-ml-ops/a
 >
 > Answer:
 
---- question 12 fill here ---
 We used hydra to organize the configurations in config files in two layers. This allows us to specify which model architecture we want to train on. To run an experiment using the simple mlp model with batch size 200, on would run
 
 `python src/ml_backend/train_model.py training.models=simple_mlp training.models.batch_size=200`
@@ -341,7 +333,6 @@ We have used docker containers to ensure reproducibility and consistency across 
 >
 > Answer:
 
---- question 13 fill here ---
 We have used containers to ensure reproducibility and consistency across different environments. To secure that no information is lost, and the experiments are reproducible we have made use of config files and used weights and biases for logging (version-controlled configs). The config files also contain which seed has been used in the experiment. Whenever an experiment is run weights and biases creates a folder with files containing the requirements, configs, and model summary. The folders are placed locally and online. By storing it online we ensure that no information is lost. Storing it online using wandb is especially important since the log files not tracked by git. This is because version controlling multiple large files is undesirable, but we still want to store them.
 
 ### Question 14
@@ -359,12 +350,11 @@ We have used containers to ensure reproducibility and consistency across differe
 >
 > Answer:
 
---- question 14 fill here ---
 ![1. Loss and accuracy graphs for training and validation in W&B](figures/wb_experiment_loss.png)
 ![2. Table displaying the hyperparameters used for the experiment.](figures/wb_experiment_config.png)
 ![3. Sweep over batch size and learning rate](figures/wb_sweep.png)
 
-The first two figures display information about a single experiment and the third are produced by a sweep. Figure 1 shows the loss and accuracy graphs for both training and validation for an experiment inside our sweep. It is important to track for both training and validation to ensure that the model does not overfit. We have tracked both accuracy and loss, since accuracy gives a good overview, while loss is used when determining model performance. The table in figure 2 displays a proportion of the config file, that has been logged. The last figure displays a sweep where we have used Bayesian hyperparameter optimization of learning rate and batch size. The objective of the optimization is to minimize the validation loss. The figure shows that the validation loss is low, when the batch size is around 130 and the learning rate is close to 0.0001.
+The first two figures display information about a single experiment and the third are produced by a sweep. Figure 1 shows the loss and accuracy graphs for both training and validation for an experiment inside our sweep. It is important to track for both training and validation to ensure that the model does not overfit and to monitor model performance. We have tracked both accuracy and loss, since accuracy gives a good overview, while loss is used when determining model performance. The table in figure 2 displays a proportion of the config file, that has been logged. The last figure displays a sweep where we have used Bayesian hyperparameter optimization of learning rate and batch size. The objective of the optimization is to minimize the validation loss. The figure shows that the validation loss is low, when the batch size is around 130 and the learning rate is close to 0.0001.
 
 ### Question 15
 
@@ -449,8 +439,6 @@ Thus, to deploy a new model, do the following stesp:
 >
 > Answer:
 
---- question 18 fill here ---GROUP ALL
-cloud run managed vms
 
 We didn't use the Compute Engine API. Instead we used Cloud Run and Cloud Build to host and build docker containers in the following way.
 
@@ -478,7 +466,6 @@ This means that we only used the compute engine indirectly, and the most heavy c
 >
 > Answer:
 
---- question 20 fill here ---
 <!-- *camera flash* https://console.cloud.google.com/gcr/images/dtu-mlops-project-64?project=dtu-mlops-project-64 -->
 [Inference server (backend) container registry](figures/inference_container_registry.png)
 [Webpage server (frontend) container registry](figures/webpage_container_registry.png)
@@ -505,10 +492,6 @@ This means that we only used the compute engine indirectly, and the most heavy c
 > *`curl -X POST -F "file=@file.json"<weburl>`*
 >
 > Answer:
-
---- question 22 fill here ---
-locally and cloud, cloudbuild and via docker containers
-WE GOT A WEBSITE TYRANOSAURUSREEEKT
 
 We only trained our model locally, and we deployed our trained model as an inference server both locally and on the cloud. We chose not to train our model on the cloud because we had the resources to train them locally, and thereby it reducecd waiting time.
 
@@ -543,7 +526,6 @@ built-in in monitoring from gcp and logging, no model monitoring, unable to dete
 >
 > Answer:
 
---- question 24 fill here ---
 The total cost of the project was 0.43 dollars. We used two services, Cloud Storage and Cloud Run. Cloud Storage was most expensive with a cost of 0.32 dollars.
 
 
@@ -586,11 +568,6 @@ We train our models locally and push the model snapshots to the corresponding GC
 > *The biggest challenges in the project was using ... tool to do ... . The reason for this was ...*
 >
 > Answer:
-
---- question 26 fill here ---
-This was a project focused on learning to use gcp, and thus the issues arose here,
-hydra,
-wsl - docker - gpu vs cpu
 
 In general our biggest struggles were related to
 

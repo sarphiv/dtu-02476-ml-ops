@@ -511,8 +511,8 @@ built-in in monitoring from gcp and logging, no model monitoring, unable to dete
 >
 > Answer:
 
---- question 24 fill here ---ASK HIM TOMORROW
-TO BE CONTINUED... [cost report](https://console.cloud.google.com/billing/012EBF-8DA735-464455/reports%253BtimeRange%253DCUSTOM_RANGE%253Bfrom%253D2024-01-02%253Bto%253D2024-01-17%253Bprojects%253Ddtu-mlops-project-64%253Bcredits%253DNONE%253BnegotiatedSavings%253Dfalse?organizationId%253D247085167883%2526project%253Ddtu-mlops-project-64)
+--- question 24 fill here ---
+The total cost of the project was 0.43 dollars. We used two services, Cloud Storage and Cloud Run. Cloud Storage was most expensive with a cost of 0.32 dollars.
 
 
 ## Overall discussion of project

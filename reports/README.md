@@ -128,7 +128,7 @@ s204102, s204121, s204147, s204111, s204241
 >
 > Answer:
 
-We used the third-party framework `timm` in our project. We used the framework's definition of a ResNet-18 model to instantiate a ResNet-18 image classification model, which enabled us to begin working fast. This model was customized by timm for us so that it output 10 classes. The framework also made pretrained weights available to us, which it downloaded from HuggingFace, and then it automagically replaced the randomly initialized weights of the ResNet-18 model.
+We used the third-party framework `timm` in our project. We used the framework's definition of a ResNet-18 model to instantiate a ResNet-18 image classification model, with pretrained weights available to us, which it downloaded from HuggingFace. Since the ResNet-18 was pretrained, in order to use it for a task with 10 classes, the classifier (the last linear layer) of the model was replaced by a linear layer with random weights and 10 outputs. The model is then finetuned, which dramatically reduces training time.
 
 In spite of how nice `timm` is, we, however, also have a simple MLP model that is used for local development purposes. Some of our members do not have access to GPUs so running even a small model like ResNet-18 is prohibitively delaying for them while developing.
 
@@ -151,9 +151,18 @@ In spite of how nice `timm` is, we, however, also have a simple MLP model that i
 >
 > Answer:
 
---- question 4 fill here ---
-devcontainer, dockerfiles, and requirements.txt + dev
-install docker (+maybe nvidia-docker), start devcontainer + WSL?!
+A new member would follow the installation instructions in the project `README.md` to install the project.
+The recommended way is to use devcontainers, this requires the new team member to have `Docker` installed on their system.
+If they have a GPU, and they want to accelerate their processing they also need to install NVIDIA's container runtime. 
+Afterwards they can just open the devcontainer, and the environment will automatically be setup for them.
+
+Unfortunately the containers depend on Linux, so Windows and MacOS users have to run a Linux VM through e.g. WSL,
+where the Docker Engine will actually be running. Fortunately Window's WSL integration is, however, mature.
+
+Our project dependencies are tracked via requirements files; we have requirement files for running the project, 
+and a requirements file for developing on the project. These files are tied to our project via the pyproject file.
+These files are maintained manually because in very rare cases `pipreqs` fails.
+
 
 ### Question 5
 
@@ -170,9 +179,12 @@ install docker (+maybe nvidia-docker), start devcontainer + WSL?!
 
 We have modified the cookiecutter template to have a `src`-based structure instead. This is to separate our source code from the other folders in our project for both clarity and to avoid naming conflicts. We also have two different modules in our project: the ML backend, and the website frontend, which this structure helps to highlight.
 
+[do we expplain our use of devcontainers? - this should probably be done in question 4]
 We have added a `.devcontainer` folder for our devcontainer specification to ensure that we all work in the same environment. We have added a `cloudbuilds` folder for integration with GCP cloud builds. We have not used the `docs` and `notebooks` directories, nor the `Makefile`, so these have all been removed. Our `pyproject.toml` has been modified appropriately to enable installation of our project.
 
-Our configuration structure is hierarchical in that our global and default configurations are described first, and then subsettings are overwritten by config files in directories further down. In our case, we have different configurations depending upon what model type is currently used (ResNet18 vs. Simple MLP).
+Our tests are placed in their associated modules in a `tests` folder. This is to avoid having to duplicate and maintain the source code structure in a separate `tests` folder in the project root directory. PyTest supports this structure with minimal changes to the `pyproject.toml` file. 
+
+Our configuration structure is hierarchical in that our global and default configurations are described first, and then subsettings set by config files in directories further down. In our case, we have different configurations depending upon what model type is currently used (ResNet18 vs. Simple MLP).
 
 ### Question 6
 
@@ -205,7 +217,7 @@ As part of the github actions we verify the format using ruff and run our tests 
 >
 > Answer:
 
-Pytest is not a new concept to us and therefore we only develop any tests as a proof of concept. We have two tests that together check if the data can be loaded correctly and that when it is loaded it is in the correct format (shape). To challenge ourselves we use `@pytest.fixture(scope="session")` so that we can test our data creation and manipulation without changing anything in our local repository and so that we do not need to store the data in GitHub.
+Pytest is not a new concept to us and we therefore only develop tests as a proof of concept. We have two tests that together check if the data can be loaded correctly and in the correct format (shape). To challenge ourselves and to not let the tests modify our repository, we use `@pytest.fixture(scope="session")`. We chose to focus our time on getting Google Cloud to work, and therefore our tests are fairly sparse.
 
 ### Question 8
 
@@ -280,7 +292,7 @@ We also have some unit tests set up via PyTest, which are integrated into our ID
 
 To ensure our checks above are run before changes to the main branch, we also run them via GitHub Actions once code has been pushed. This is useful in cases where someone has somehow messed up their devcontainer, is developing outside the devcontainer, or simply forgot to run pytest.
 
-To speed up our continuous integration, we make use of caching on GitHub Actions to avoid downloading our package requirements repeatedly - this is implemented via the setup-python@v4 workflow, which implements it via a one-liner. We do not test across multiple platforms nor Python versions, because we are not developing a package to be distributed through PyPi. Our applications are deployed via containers to GCP, so our runtime environments are controlled and known.
+To speed up our continuous integration, we make use of caching on GitHub Actions to avoid downloading our package requirements repeatedly - this is implemented via the setup-python@v4 workflow, which implements it via a one-liner. We do not test across multiple platforms nor Python versions, because we are not developing a package to be distributed through PyPi. Our applications are deployed via containers to GCP, so our runtime environments are controlled and known. In other words, our package is not inteded for use by different end users on different systems. It is intended as a backend that end users will only ever interact with through an api, and thus we are able to control the environment in which our package will run.
 
 One of our runs can be seen [here](https://github.com/sarphiv/dtu-02476-ml-ops/actions/runs/7555077753)
 
@@ -303,7 +315,15 @@ One of our runs can be seen [here](https://github.com/sarphiv/dtu-02476-ml-ops/a
 > Answer:
 
 --- question 12 fill here ---
-We used hydra to organize the config files. The config files have been organized in two layers. This allows us to specify which model architecture we want to train on. We have used weights and biases to log our experiments. We have also set up a sweep with weights and biases, which can be initialized the following way: wandb sweep configs/sweep.yaml. We have used containers to ensure reproducibility and consistency across different environments.
+We used hydra to organize the configurations in config files in two layers. This allows us to specify which model architecture we want to train on. To run an experiment using the simple mlp model with batch size 200, on would run
+
+`python src/ml_backend/train_model.py training.models=simple_mlp training.models.batch_size=200`
+
+We have used weights and biases to log our experiments. A Weights & Biases sweep can be initialized by:
+
+`wandb sweep configs/sweep.yaml`
+
+We have used docker containers to ensure reproducibility and consistency across different systems and machines.
 
 
 ### Question 13
@@ -357,14 +377,14 @@ The first two figures display information about a single experiment and the thir
 >
 > Answer:
 
-For our training experiments we have a dockerfile made specifically training. We, however, only used this once, because it was faster and cheaper to train our models locally instead of on GCP Vertex AI. Our experiments have therefore been run directly in our devcontainer, which uses our devcontainer dockerfile.
+For our training experiments we have a dockerfile made specifically for training. We, however, only used this once, because it was faster and cheaper to train our models locally instead of on GCP Vertex AI. Our experiments have therefore been run directly in our devcontainer, which uses our devcontainer dockerfile.
 
 Our `dev.Dockerfile` simply sets up system packages, a non-root user, and then it caches the package requirements as an image layer. The `devcontainer.json` then sets up the rest of the development tools and settings.
 
 For the inference server to be deployed we have a separate dockerfile. This server is simply run with `docker run -p <host-port>:8080 inference-server:latest`. Our frontend website image is also simply run with `docker run -p <host-port>:80 website:latest`.
 
-[dev.Dockerfile](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/dockerfiles/dev.Dockerfile)
-[devcontainer.json](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/.devcontainer/gpu/devcontainer.json)
+- [dev.Dockerfile](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/dockerfiles/dev.Dockerfile)
+- [devcontainer.json](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/.devcontainer/gpu/devcontainer.json)
 
 
 ### Question 16
@@ -380,10 +400,12 @@ For the inference server to be deployed we have a separate dockerfile. This serv
 >
 > Answer:
 
---- question 16 fill here ---GROUP 1
-debugger in vs-code, attach debugger to different process and then it just worked
-cloud console logs
-Container debugging
+As the focus was on CI, CD, and cloud no profiling was done as the code was already fast enough, so it was not a priority.
+When we encountered bugs we used the debugger integration in VSCode to debug our application via breakpoints and the debug console. 
+We also made use of the debugger's ability to attach to running processes such that we could debug the frontend, which was started via uvicorn.
+When the cloud builds and/or deployments failed, we investigated the errors via the cloud console logs. 
+In a few occasions we also gained shell access to running containers such that we could debug file system issues.
+
 
 ## Working in the cloud
 
@@ -425,7 +447,7 @@ We used the compute engine to host
  1. a server used for running inference on a trained resnet18 model, and
  2. a server used to run a webpage where you can upload images, and these are then classified using the aforementioned model.
 
-We used triggers to build our docker images and deploy them using Cloud Run. Since we only used GCP for inference, we didn't use GPUs. We just asked for 4 GB of ram and 2 CPU's, and then Cloud Build took care of managing the instances.
+We used triggers to build our docker images and deploy them using Cloud Run. Since we only used GCP for inference, we didn't use GPUs. We just asked for [4 GB of ram and 2 CPU's], and then Cloud Build took care of managing the instances.
 
 ### Question 19
 
@@ -446,8 +468,8 @@ We used triggers to build our docker images and deploy them using Cloud Run. Sin
 
 --- question 20 fill here ---
 <!-- *camera flash* https://console.cloud.google.com/gcr/images/dtu-mlops-project-64?project=dtu-mlops-project-64 -->
-[this figure](figures/inference_container_registry.png)
-[this figure](figures/webpage_container_registry.png)
+[Inference server (backend) container registry](figures/inference_container_registry.png)
+[Webpage server (frontend) container registry](figures/webpage_container_registry.png)
 
 ### Question 21
 

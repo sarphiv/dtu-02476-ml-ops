@@ -151,9 +151,18 @@ In spite of how nice `timm` is, we, however, also have a simple MLP model that i
 >
 > Answer:
 
---- question 4 fill here ---
-devcontainer, dockerfiles, and requirements.txt + dev
-install docker (+maybe nvidia-docker), start devcontainer + WSL?!
+A new member would follow the installation instructions in the project `README.md` to install the project.
+The recommended way is to use devcontainers, this requires the new team member to have `Docker` installed on their system.
+If they have a GPU, and they want to accelerate their processing they also need to install NVIDIA's container runtime. 
+Afterwards they can just open the devcontainer, and the environment will automatically be setup for them.
+
+Unfortunately the containers depend on Linux, so Windows and MacOS users have to run a Linux VM through e.g. WSL,
+where the Docker Engine will actually be running. Fortunately Window's WSL integration is, however, mature.
+
+Our project dependencies are tracked via requirements files; we have requirement files for running the project, 
+and a requirements file for developing on the project. These files are tied to our project via the pyproject file.
+These files are maintained manually because in very rare cases `pipreqs` fails.
+
 
 ### Question 5
 
@@ -172,6 +181,8 @@ We have modified the cookiecutter template to have a `src`-based structure inste
 
 [do we expplain our use of devcontainers? - this should probably be done in question 4]
 We have added a `.devcontainer` folder for our devcontainer specification to ensure that we all work in the same environment. We have added a `cloudbuilds` folder for integration with GCP cloud builds. We have not used the `docs` and `notebooks` directories, nor the `Makefile`, so these have all been removed. Our `pyproject.toml` has been modified appropriately to enable installation of our project.
+
+Our tests are placed in their associated modules in a `tests` folder. This is to avoid having to duplicate and maintain the source code structure in a separate `tests` folder in the project root directory. PyTest supports this structure with minimal changes to the `pyproject.toml` file. 
 
 Our configuration structure is hierarchical in that our global and default configurations are described first, and then subsettings set by config files in directories further down. In our case, we have different configurations depending upon what model type is currently used (ResNet18 vs. Simple MLP).
 
@@ -372,8 +383,8 @@ Our `dev.Dockerfile` simply sets up system packages, a non-root user, and then i
 
 For the inference server to be deployed we have a separate dockerfile. This server is simply run with `docker run -p <host-port>:8080 inference-server:latest`. Our frontend website image is also simply run with `docker run -p <host-port>:80 website:latest`.
 
-[dev.Dockerfile](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/dockerfiles/dev.Dockerfile)
-[devcontainer.json](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/.devcontainer/gpu/devcontainer.json)
+- [dev.Dockerfile](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/dockerfiles/dev.Dockerfile)
+- [devcontainer.json](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/.devcontainer/gpu/devcontainer.json)
 
 
 ### Question 16
@@ -389,10 +400,12 @@ For the inference server to be deployed we have a separate dockerfile. This serv
 >
 > Answer:
 
---- question 16 fill here ---GROUP 1
-debugger in vs-code, attach debugger to different process and then it just worked
-cloud console logs
-Container debugging
+As the focus was on CI, CD, and cloud no profiling was done as the code was already fast enough, so it was not a priority.
+When we encountered bugs we used the debugger integration in VSCode to debug our application via breakpoints and the debug console. 
+We also made use of the debugger's ability to attach to running processes such that we could debug the frontend, which was started via uvicorn.
+When the cloud builds and/or deployments failed, we investigated the errors via the cloud console logs. 
+In a few occasions we also gained shell access to running containers such that we could debug file system issues.
+
 
 ## Working in the cloud
 

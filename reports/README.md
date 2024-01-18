@@ -239,9 +239,10 @@ Maybe? Low coverage... refer to 7
 >
 > Answer:
 
---- question 9 fill here ---
-branch names, PR, reviews, automated integration testing
--> nice that main works -> easy to understand what is added and when
+The workflow was based upon GitHub Flow, which is a lightweight version of Git flow. This workflow was enforced via settings on GitHub and peer pressure. Every new feature or fix requires the creation of a new branch.
+Branch names have the type as a prefix e.g: "feat-" or "fix-". To merge changes into the main branch, a pull request must be submitted, pass continuous integration, and be approved by at least 1 other member after review.
+
+This workflow keeps the main branch in a working state, such that continuous deployment can be set up to automatically trigger upon changes to the main branch.
 
 ### Question 10
 
@@ -277,9 +278,15 @@ used it just to transfer data and models to the google cloud bucket, but we didn
 >
 > Answer:
 
---- question 11 fill here ---
-pytest, ruff, building, caching, link to one of our successful flows (with caching)
-- If this was package we would have tested operation systems and python versions...
+We have pre-commit set up to automatically run fix/detect easily correctable issues such as mixed line ending, unfixed merge conflicts, or staged secrets. Ruff has also been hooked into pre-commit to enforce mild adherence to PEP8 (linting). This has been integrated into the devcontainer to ensure it is run locally before committing.
+We also have some unit tests set up via PyTest, which are integrated into our IDEs to enable easy running and checking.
+
+To ensure our checks above are run before changes to the main branch, we also run them via GitHub Actions once code has been pushed. This is useful in cases where someone has somehow messed up their devcontainer, is developing outside the devcontainer, or simply forgot to run pytest.
+
+To speed up our continuous integration, we make use of caching on GitHub Actions to avoid downloading our package requirements repeatedly - this is implemented via the setup-python@v4 workflow, which implements it via a one-liner. We do not test across multiple platforms nor Python versions, because we are not developing a package to be distributed through PyPi. Our applications are deployed via containers to GCP, so our runtime environments are controlled and known.
+
+One of our runs can be seen [here](https://github.com/sarphiv/dtu-02476-ml-ops/actions/runs/7555077753)
+
 
 ## Running code and tracking experiments
 
@@ -350,8 +357,15 @@ alberte and lauge do stuff that none of us know about on wandb
 >
 > Answer:
 
---- question 15 fill here ---
-devcontainer, and also the trainer image, link to dockerfile
+For our training experiments we have a dockerfile made specifically training. We, however, only used this once, because it was faster and cheaper to train our models locally instead of on GCP Vertex AI. Our experiments have therefore been run directly in our devcontainer, which uses our devcontainer dockerfile.
+
+Our `dev.Dockerfile` simply sets up system packages, a non-root user, and then it caches the package requirements as an image layer. The `devcontainer.json` then sets up the rest of the development tools and settings.
+
+For the inference server to be deployed we have a separate dockerfile. This server is simply run with `docker run -p <host-port>:8080 inference-server:latest`. Our frontend website image is also simply run with `docker run -p <host-port>:80 website:latest`.
+
+[dev.Dockerfile](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/dockerfiles/dev.Dockerfile)
+[devcontainer.json](https://github.com/sarphiv/dtu-02476-ml-ops/blob/main/.devcontainer/gpu/devcontainer.json)
+
 
 ### Question 16
 
@@ -564,5 +578,6 @@ A third struggle was using hydra in combination with fastapi when building the i
 >
 > Answer:
 
---- question 27 fill here ---
-Make the chat bot write a generic version of this
+Because all members of the group wanted to learn everything, a lot of the work has been rather collaborative. A lot of the time, we have even had 5 people standing behind the same laptop screen, or smaller groups developing together via Live Share or classical pair programming. Even when people were occasionally working on their own features, it has always been with discussions and help from the others. And even if someone was not part of a change, because of our workflow, they still ended up affecting the change because of the enforced code review - and through that they effected changes to the code.
+
+All members therefore contributed approximately equally on everything.

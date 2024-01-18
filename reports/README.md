@@ -299,8 +299,7 @@ pytest, ruff, building, caching, link to one of our successful flows (with cachi
 > Answer:
 
 --- question 12 fill here ---
-sweep + configs, hydra, dockerfile
-tyro
+We used hydra to organize the config files. The config files have been organized in two layers. This allows us to specify which model architecture we want to train on. We have used weights and biases to log our experiments. We have also set up a sweep with weights and biases, which can be initialized the following way: wandb sweep configs/sweep.yaml. We have used containers to ensure reproducibility and consistency across different environments.
 
 
 ### Question 13

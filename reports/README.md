@@ -266,14 +266,7 @@ This workflow keeps the main branch in a working state, such that continuous dep
 >
 > Answer:
 
---- question 10 fill here ---
-We have used DVC to transfer our data and trained models to a GCS Bucket, where object versioning has been activated. It is especially important when dealing with dynamic datasets. Knowing which dataset corresponds to each model aids in understanding performance variations. Additionally, in scenarios where a new model performs worse after deployment, having version control facilitates efficient rollbacks to an old model that behaved better. This capability enhances our ability to identify and address issues fast, contributing to the overall robustness of the project. It also ensures reproducible results.
-
-used it just to transfer data and models to the google cloud storage bucket, but we didn't have different versions of the vod
-- if data is changing -> more data along the way, we know which dataset correpsonds to each model.
-- when do things break
-- in case a new model appears worse once deployed, it allows rollbacks
--
+We have used DVC to transfer our data and trained models to a GCS Bucket. Here it is possible to activate object versioning and determine the number of versions that should be stored. It is especially important when dealing with dynamic datasets. Knowing which dataset corresponds to each model aids in understanding performance variations. Additionally, in scenarios where a new model performs worse after deployment, having version control facilitates efficient rollbacks to an old model that behaved better. This capability enhances our ability to identify and address issues fast, contributing to the overall robustness of the project. It also ensures reproducible results.
 
 ### Question 11
 
@@ -364,7 +357,17 @@ We have used containers to ensure reproducibility and consistency across differe
 ![2. Table displaying the hyperparameters used for the experiment.](figures/wb_experiment_config.png)
 ![3. Sweep over batch size and learning rate](figures/wb_sweep.png)
 
-The first two figures display information about a single experiment and the third are produced by a sweep. Figure 1 shows the loss and accuracy graphs for both training and validation for an experiment inside our sweep. It is important to track for both training and validation to ensure that the model does not overfit. We have tracked both accuracy and loss, since accuracy gives a good overview, while loss is used when determining model performance. The table in figure 2 displays a proportion of the config file, that has been logged. The last figure displays a sweep where we have used Bayesian hyperparameter optimization of learning rate and batch size. The objective of the optimization is to minimize the validation loss. The figure shows that the validation loss is low, when the batch size is around 130 and the learning rate is close to 0.0001.
+In the presented figures, we showcase the comprehensive utilization of Weights and Biases (W&B) for experiment tracking and hyperparameter optimization in our machine learning pipeline.
+
+The first two figures are screenshots from weights and biases displaying information about a single experiment and the third visualize a hyperparameter search (sweep). 
+Figure 1 shows the loss and accuracy graphs for both training and validation for a single run inside our sweep. It is important to track for both training and validation to ensure that the fitting is balanced. We have tracked both accuracy and loss, since accuracy gives a good overview, while loss is used when determining model performance. 
+
+The table in figure 2 displays that the configuration file for a single run has been logged and stored online at the W&B. 
+
+The last figure displays a sweep where we have used Bayesian hyperparameter search of two parameters: learning rate and batch size. The objective of the optimization is to minimize the validation loss. The figure is based on 45 runs of the ResNet18 model. The figure shows how different combinations of learning rate and batch size influence the validation loss. 
+The lowest validation loss was generated with: 
+learning rate = 0.0001157
+batch size = 128
 
 ### Question 15
 

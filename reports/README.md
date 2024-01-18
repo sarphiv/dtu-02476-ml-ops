@@ -184,8 +184,9 @@ Our configuration structure is hierarchical in that our global and default confi
 > Answer:
 
 --- question 6 fill here ---
-ruff, pre-commit, pytest, github actions
-Github Flow, branch name rules, PR review requirements
+To ensure good code quality and format we have set up pre-commits, github actions as well as used GitHub flow and required peer review before merging into the main branch. 
+As part of the github actions we verify the format using ruff and run our tests created using pytest. Consistent code improves readability, collaboration, and maintainability in larger projects, and helps reduce the possibility of bugs or issues.
+
 
 ## Version control
 
@@ -305,8 +306,7 @@ One of our runs can be seen [here](https://github.com/sarphiv/dtu-02476-ml-ops/a
 > Answer:
 
 --- question 12 fill here ---
-sweep + configs, hydra, dockerfile
-tyro
+We used hydra to organize the config files. The config files have been organized in two layers. This allows us to specify which model architecture we want to train on. We have used weights and biases to log our experiments. We have also set up a sweep with weights and biases, which can be initialized the following way: wandb sweep configs/sweep.yaml. We have used containers to ensure reproducibility and consistency across different environments.
 
 
 ### Question 13

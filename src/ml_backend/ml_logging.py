@@ -3,7 +3,7 @@ import sys
 import os
 from logging import Logger
 from pathlib import Path
-from hydra import initialize, compose
+import omegaconf
 
 log_level_mapping = {
     "debug": logging.DEBUG,
@@ -55,12 +55,11 @@ def get_configs(cfg):
     return logging_config
 
 def get_logger() -> Logger:
-    with initialize(config_path=os.environ.get("CONFIG_DIR", "../../configs"), version_base="1.3"):
-        cfg = compose(config_name="logging")
-        level = log_level_mapping[cfg.log_level]
-        logging.basicConfig(stream=sys.stdout, level=level)
-        # logging.config.dictConfig(config)
-        return logging.getLogger(__name__)
+    cfg = omegaconf.OmegaConf.load(os.environ.get("CONFIG_DIR", "configs/logging.yaml"))
+    level = log_level_mapping[cfg.log_level]
+    logging.basicConfig(stream=sys.stdout, level=level)
+    # logging.config.dictConfig(config)
+    return logging.getLogger(__name__)
 
 if __name__ == "__main__":
     # Test the logger

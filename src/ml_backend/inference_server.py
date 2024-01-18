@@ -13,6 +13,8 @@ from ml_backend.ml_logging import get_logger as get_ml_logger
 
 
 with initialize(config_path=os.environ.get("CONFIG_DIR", "../../configs"), version_base="1.3"):
+    logger = get_ml_logger()
+    logger.info("Starting the inference server")
     cfg = compose(config_name="config")
     app = FastAPI()
     app.add_middleware(
@@ -34,7 +36,6 @@ with initialize(config_path=os.environ.get("CONFIG_DIR", "../../configs"), versi
 
 @app.post("/predict/")
 async def predict(data: UploadFile = File(...)):
-    logger = get_ml_logger()
     # Attempt converting the image to PIL format
     try:
         logger.info("Attempting to load image")

@@ -40,8 +40,9 @@ def load_model(model_path: str, device: str = "cpu") -> BaseModel:
 
 def load_model_best(cfg: Any) -> BaseModel:
     # If file does not exist, then raise error
-    if not os.path.isfile(Path(cfg.training.models.model_dir) / "best_model.yaml"):
-        get_ml_logger().critical("best_model.yaml not found. You must train a model first.")
+    path = Path(cfg.training.models.model_dir) / "best_model.yaml"
+    if not os.path.isfile(path):
+        get_ml_logger().critical(f"best_model.yaml not found in path {path}. You must train a model first.")
         raise FileNotFoundError("best_model.yaml not found. You must train a model first.")
 
     # Load the best model so far

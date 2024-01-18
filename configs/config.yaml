@@ -19,5 +19,5 @@ training:
 system:
   wandb_project: 'dtu_mlops_02476'
   wandb_entity: 'metrics_logger'
-  load_model_from: 'data-dtu-mlops-bucket'
+  load_model_from: null
   file_name: 'models'

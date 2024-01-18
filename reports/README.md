@@ -238,7 +238,7 @@ This shows that both having 100% coverage does not mean that the code is error f
 > Answer:
 
 The workflow was based upon GitHub Flow, which is a lightweight version of Git flow. This workflow was enforced via settings on GitHub and peer pressure. Every new feature or fix requires the creation of a new branch.
-Branch names have the type as a prefix e.g: "feat-" or "fix-". To merge changes into the main branch, a pull request must be submitted, pass continuous integration, and be approved by at least 1 other member after review.
+Branch names have the type as a prefix e.g: "feat-" or "fix-". For example, if one were to add wandb logging to the training script, the branch would be named "feat-wand-logging". To merge changes into the main branch, a pull request must be submitted, pass continuous integration, and be approved by at least 1 other member after review.
 
 This workflow keeps the main branch in a working state, such that continuous deployment can be set up to automatically trigger upon changes to the main branch.
 
@@ -329,7 +329,7 @@ We have used docker containers to ensure reproducibility and consistency across 
 > Answer:
 
 --- question 13 fill here ---
-We have used containers to ensure reproducibility and consistency across different environments. To secure that no information is lost, and the experiments are reproducible we have made use of config files and used weights and biases for logging (version-controlled configs). The config files also contain which seed has been used in the experiment. Whenever an experiment is run weights and biases creates a folder with files containing the requirements, configs, and model summary. The folders are placed locally and online. By storing it online we ensure that no information is lost.
+We have used containers to ensure reproducibility and consistency across different environments. To secure that no information is lost, and the experiments are reproducible we have made use of config files and used weights and biases for logging (version-controlled configs). The config files also contain which seed has been used in the experiment. Whenever an experiment is run weights and biases creates a folder with files containing the requirements, configs, and model summary. The folders are placed locally and online. By storing it online we ensure that no information is lost. Storing it online using wandb is especially important since the log files not tracked by git. This is because version controlling multiple large files is undesirable, but we still want to store them.
 
 ### Question 14
 
@@ -409,9 +409,17 @@ Container debugging
 >
 > Answer:
 
-We have a fully developed continuous deployment pipeline that stores model snapshots and training data in a `GCP bucket`, has a `GCP trigger` that deploys our inference server and webpage to two different instances of `GCP run` when we push to our main branch on GitHub, to deploy to `GCP run` we first build an image (again with the `GCP trigger`) which is done with `GCP build` and is stored in `GCP container registry`, at last to access the `GCP bucket` our `GCP run` is using a IAM account that has access to viewing all data in our bucket.
+We store model snapshots and training data in a `GCP Bucket` using dvc.
 
-The only thing we do not use GCP for is training our model with `Vertex AI`, but as we chose a very simple ML problem there is no need for large scale training.
+For deploying the model we have a fully developed continuous deployment pipeline. The backbone consists of two `GCP Trigger`s. They take care of building the images and deploying our inference server and webpage. The triggers first build the images using `GCP Build` and store them in `GCP container registry`. At last we use `GCP Run` to host the server, and it gets access to the `GCP bucket` using an IAM account that has access to viewing all of the data in our bucket. The triggers run every time something is pushed to main branch on GitHub.
+
+We skip Vertex AI for model training due to the simplicity of the ML problem, eliminating the necessity for extensive training.However, the training script is setup such that it always saves a pointer to the best model that has ever been trained.
+
+Thus, to deploy a new model, do the following stesp:
+
+1. train the model by starting the training script manually.
+2. `dvc push` the model
+3. push to main branch on github using PR.
 
 ### Question 18
 

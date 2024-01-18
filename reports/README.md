@@ -151,9 +151,18 @@ In spite of how nice `timm` is, we, however, also have a simple MLP model that i
 >
 > Answer:
 
---- question 4 fill here ---
-devcontainer, dockerfiles, and requirements.txt + dev
-install docker (+maybe nvidia-docker), start devcontainer + WSL?!
+A new member would follow the installation instructions in the project `README.md` to install the project.
+The recommended way is to use devcontainers, this requires the new team member to have `Docker` installed on their system.
+If they have a GPU, and they want to accelerate their processing they also need to install NVIDIA's container runtime. 
+Afterwards they can just open the devcontainer, and the environment will automatically be setup for them.
+
+Unfortunately the containers depend on Linux, so Windows and MacOS users have to run a Linux VM through e.g. WSL,
+where the Docker Engine will actually be running. Fortunately Window's WSL integration is, however, mature.
+
+Our project dependencies are tracked via requirements files; we have requirement files for running the project, 
+and a requirements file for developing on the project. These files are tied to our project via the pyproject file.
+These files are maintained manually because in very rare cases `pipreqs` fails.
+
 
 ### Question 5
 

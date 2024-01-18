@@ -206,8 +206,7 @@ As part of the github actions we verify the format using ruff and run our tests 
 >
 > Answer:
 
---- question 7 fill here ---
-Pytest is not a new concept to us and we therefore only develop tests as a proof of concept. We have two tests that together check if the data can be loaded correctly and in the correct format. To challenge ourselves and to not let the tests modify our repository, we use `@pytest.fixture(scope="session")`. We chose to focus our time on getting Google Cloud to work, and therefore our tests are fairly sparse.
+Pytest is not a new concept to us and we therefore only develop tests as a proof of concept. We have two tests that together check if the data can be loaded correctly and in the correct format (shape). To challenge ourselves and to not let the tests modify our repository, we use `@pytest.fixture(scope="session")`. We chose to focus our time on getting Google Cloud to work, and therefore our tests are fairly sparse.
 
 ### Question 8
 
@@ -222,10 +221,9 @@ Pytest is not a new concept to us and we therefore only develop tests as a proof
 >
 > Answer:
 
---- question 8 fill here --- GROUP 1
-Maybe? Low coverage... refer to 7
-100% does not mean error free, just that the code ran in a test
+When using the `coverage` library we get a very high coverage (97%), because the `__name__=="__main__"` statement is never run. This is quite misleading as we are only testing 2 of our scripts. This means that because the other scripts are never run with our pytest, the coverage library does not detect that they contain any statements. If we used the test for anything else than a proof of concept we would have implemented tests to check for training the model, making inference with the model and our webserver, but we instead chose to focus on cloud deployment as this is new to us.
 
+This shows that both having 100% coverage does not mean that the code is error free, as you can obtain a 100% without actually having any tests. Further, if you actually have 100% coverage and you are testing all files this still won't necessarily mean that there are no errors in the code that is tested e.g. a method that can take any iterable might only be tested with lists, and might fail when using numpy arrays which could be done somewhere else in the code.
 ### Question 9
 
 > **Did you workflow include using branches and pull requests? If yes, explain how. If not, explain how branches and**
@@ -330,14 +328,14 @@ We have used docker containers to ensure reproducibility and consistency across 
 >
 > Answer:
 
---- question 13 fill here --- GROUP 2
-seeds, version controlled configs, wandb
+--- question 13 fill here ---
+We have used containers to ensure reproducibility and consistency across different environments. To secure that no information is lost, and the experiments are reproducible we have made use of config files and used weights and biases for logging (version-controlled configs). The config files also contain which seed has been used in the experiment. Whenever an experiment is run weights and biases creates a folder with files containing the requirements, configs, and model summary. The folders are placed locally and online. By storing it online we ensure that no information is lost.
 
 ### Question 14
 
 > **Upload 1 to 3 screenshots that show the experiments that you have done in W&B (or another experiment tracking**
 > **service of your choice). This may include loss graphs, logged images, hyperparameter sweeps etc. You can take**
-> **inspiration from [this figure](figures/wandb.png). Explain what metrics you are tracking and why they are**
+> **inspiration from [this figure](figures/examples/wandb.png). Explain what metrics you are tracking and why they are**
 > **important.**
 >
 > Answer length: 200-300 words + 1 to 3 screenshots.
@@ -349,8 +347,11 @@ seeds, version controlled configs, wandb
 > Answer:
 
 --- question 14 fill here ---
-sweeps
-alberte and lauge do stuff that none of us know about on wandb
+![1. Loss and accuracy graphs for training and validation in W&B](figures/wb_experiment_loss.png)
+![2. Table displaying the hyperparameters used for the experiment.](figures/wb_experiment_config.png)
+![3. Sweep over batch size and learning rate](figures/wb_sweep.png)
+
+The first two figures display information about a single experiment and the third are produced by a sweep. Figure 1 shows the loss and accuracy graphs for both training and validation for an experiment inside our sweep. It is important to track for both training and validation to ensure that the model does not overfit. We have tracked both accuracy and loss, since accuracy gives a good overview, while loss is used when determining model performance. The table in figure 2 displays a proportion of the config file, that has been logged. The last figure displays a sweep where we have used Bayesian hyperparameter optimization of learning rate and batch size. The objective of the optimization is to minimize the validation loss. The figure shows that the validation loss is low, when the batch size is around 130 and the learning rate is close to 0.0001.
 
 ### Question 15
 
@@ -408,8 +409,9 @@ Container debugging
 >
 > Answer:
 
---- question 17 fill here ---
-cloud run, buckets, iam (service accounts), cloud build, triggers, artifact registry
+We have a fully developed continuous deployment pipeline that stores model snapshots and training data in a `GCP bucket`, has a `GCP trigger` that deploys our inference server and webpage to two different instances of `GCP run` when we push to our main branch on GitHub, to deploy to `GCP run` we first build an image (again with the `GCP trigger`) which is done with `GCP build` and is stored in `GCP container registry`, at last to access the `GCP bucket` our `GCP run` is using a IAM account that has access to viewing all data in our bucket.
+
+The only thing we do not use GCP for is training our model with `Vertex AI`, but as we chose a very simple ML problem there is no need for large scale training.
 
 ### Question 18
 
@@ -441,8 +443,8 @@ We used triggers to build our docker images and deploy them using Cloud Run. Sin
 >
 > Answer:
 
---- question 19 fill here ---
-smiiiile *camera flash*
+[this figure](figures/bucket_models.png)
+[this figure](figures/bucket_data.png)
 
 ### Question 20
 
@@ -463,8 +465,7 @@ smiiiile *camera flash*
 >
 > Answer:
 
---- question 21 fill here ---
-that's a lot of errors https://console.cloud.google.com/cloud-build/builds;region=europe-west1?referrer=search&project=dtu-mlops-project-64
+[this figure](figures/cloud_build.png)
 
 ### Question 22
 
@@ -502,6 +503,7 @@ For our inference server we used Cloud Build to build the images, and we used Cl
 > Answer:
 
 --- question 23 fill here ---
+
 built-in in monitoring from gcp and logging, no model monitoring, unable to detect drift because no new data... what could we have done
 
 ### Question 24
@@ -516,8 +518,8 @@ built-in in monitoring from gcp and logging, no model monitoring, unable to dete
 >
 > Answer:
 
---- question 24 fill here ---ASK HIM TOMORROW
-TO BE CONTINUED... [cost report](https://console.cloud.google.com/billing/012EBF-8DA735-464455/reports%253BtimeRange%253DCUSTOM_RANGE%253Bfrom%253D2024-01-02%253Bto%253D2024-01-17%253Bprojects%253Ddtu-mlops-project-64%253Bcredits%253DNONE%253BnegotiatedSavings%253Dfalse?organizationId%253D247085167883%2526project%253Ddtu-mlops-project-64)
+--- question 24 fill here ---
+The total cost of the project was 0.43 dollars. We used two services, Cloud Storage and Cloud Run. Cloud Storage was most expensive with a cost of 0.32 dollars.
 
 
 ## Overall discussion of project

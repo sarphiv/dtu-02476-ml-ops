@@ -267,6 +267,8 @@ This workflow keeps the main branch in a working state, such that continuous dep
 > Answer:
 
 --- question 10 fill here ---
+We have used DVC to transfer our data and trained models to a GCS Bucket, where object versioning has been activated. It is especially important when dealing with dynamic datasets. Knowing which dataset corresponds to each model aids in understanding performance variations. Additionally, in scenarios where a new model performs worse after deployment, having version control facilitates efficient rollbacks to an old model that behaved better. This capability enhances our ability to identify and address issues fast, contributing to the overall robustness of the project. It also ensures reproducible results. 
+
 used it just to transfer data and models to the google cloud storage bucket, but we didn't have different versions of the vod
 - if data is changing -> more data along the way, we know which dataset correpsonds to each model.
 - when do things break

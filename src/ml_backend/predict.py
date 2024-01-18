@@ -11,6 +11,7 @@ import hydra
 from ml_backend.models.model import BaseModel
 from ml_backend.types import batch_size, channels, height, width, num_classes
 from ml_backend.data.dataset import load_dataset
+from ml_backend.ml_logging import MLLogger
 
 def load_model(model_path: str, device: str = "cpu") -> BaseModel:
     """
@@ -40,6 +41,7 @@ def load_model(model_path: str, device: str = "cpu") -> BaseModel:
 def load_model_best(cfg: Any) -> BaseModel:
     # If file does not exist, then raise error
     if not os.path.isfile(Path(cfg.training.models.model_dir) / "best_model.yaml"):
+        MLLogger().critical("best_model.yaml not found. You must train a model first.")
         raise FileNotFoundError("best_model.yaml not found. You must train a model first.")
 
     # Load the best model so far
@@ -126,8 +128,8 @@ def predict_data_class(
 @hydra.main(config_path="../../configs", config_name="config", version_base="1.3")
 def main(cfg):
     # Load the best model
+    MLLogger.get_logger().info(f"Loading best model from {cfg.training.models.model_dir}")
     model = load_model_best(cfg)
-
 
     # Get the data
     transforms = model.get_transform()

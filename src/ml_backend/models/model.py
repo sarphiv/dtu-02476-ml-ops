@@ -146,7 +146,7 @@ class BaseModel(pl.LightningModule):
         self.log(f"{mode}_accuracy", accuracy)
         return loss
 
-
+    # step functions differ only in logging between train, validation and test steps
     def training_step(self, batch: T_batch, batch_idx: int) -> TensorType[1]:
         return self._step_helper(batch, batch_idx, "train")
 

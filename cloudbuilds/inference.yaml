@@ -18,6 +18,8 @@ steps:
   - 'europe-west1'
   - '--memory'
   - '6G'
+  - '--cpu'
+  - '2'
   - '--max-instances'
   - '1'
   - '--allow-unauthenticated'

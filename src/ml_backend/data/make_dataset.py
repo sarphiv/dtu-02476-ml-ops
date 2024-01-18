@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torchvision
 
-from ml_backend.ml_logging import MLLogger
+from ml_backend.ml_logging import get_logger as get_ml_logger
 
 # DATA_TO_USE = 0.01
 
@@ -17,7 +17,7 @@ def make_dataset(data_dir: str | Path = ".") -> None:
         data_dir (str | Path, optional): The path to the root directory of the project. Defaults to ".".
     """
     # Get the logger
-    logger = MLLogger()
+    logger = get_ml_logger()
     logger.INFO("Making the dataset")
 
     # Create paths

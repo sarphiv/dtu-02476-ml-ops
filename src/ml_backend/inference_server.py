@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from ml_backend.predict import predict_data_class, load_model_best
 from ml_backend.storage import load_from_bucket
-from ml_backend.ml_logging import MLLogger
+from ml_backend.ml_logging import get_logger as get_ml_logger
 
 
 with initialize(config_path=os.environ.get("CONFIG_DIR", "../../configs"), version_base="1.3"):
@@ -34,7 +34,7 @@ with initialize(config_path=os.environ.get("CONFIG_DIR", "../../configs"), versi
 
 @app.post("/predict/")
 async def predict(data: UploadFile = File(...)):
-    logger = MLLogger.get_logger()
+    logger = get_ml_logger()
     # Attempt converting the image to PIL format
     try:
         logger.info("Attempting to load image")

@@ -179,7 +179,7 @@ These files are maintained manually because in very rare cases `pipreqs` fails.
 
 We have modified the cookiecutter template towards a `src`-based structure. This clearly separates our source code from the rest of our project. Furthermore, it avoids naming conflicts, and highlights the fact that we also have two different modules in our project: the ML backend, and the website frontend.
 
-We have added a `.devcontainer` folder for our devcontainer specification. We have added a `cloudbuilds` folder for integration with GCP cloud builds. `docs` and `notebooks` directories have been removed along with the `Makefile`, as these are not used. Our `pyproject.toml` has been modified appropriately to enable installation of our project.
+We have added a `.devcontainer` folder for our devcontainer specification to ensure that we all work in identical environments. We have added a `cloudbuilds` folder for integration with GCP cloud builds. `docs` and `notebooks` directories have been removed along with the `Makefile`, as these are not used. Our `pyproject.toml` has been modified appropriately to enable installation of our project.
 
 Our tests are placed in their associated modules in a `tests` folder. This is to avoid having to duplicate and maintain the source code structure in a separate `tests` folder in the project root directory. This required minimal changes to the `pyproject.toml` file.
 
@@ -466,8 +466,8 @@ This means that we only used the compute engine indirectly, and the most heavy c
 >
 > Answer:
 
-[Bucket containing model snapshots](figures/bucket_models.png)
-[Bucket containing training/test data](figures/bucket_data.png)
+![Bucket containing model snapshots](figures/bucket_models.png)
+![Bucket containing training/test data](figures/bucket_data.png)
 
 ### Question 20
 
@@ -477,8 +477,7 @@ This means that we only used the compute engine indirectly, and the most heavy c
 > Answer:
 
 <!-- *camera flash* https://console.cloud.google.com/gcr/images/dtu-mlops-project-64?project=dtu-mlops-project-64 -->
-[Inference server (backend) container registry](figures/inference_container_registry.png)
-[Webpage server (frontend) container registry](figures/webpage_container_registry.png)
+![Website server (frontend, top) and inference server (backend, bottom) container registry](figures/container_registries.png)
 
 ### Question 21
 
@@ -487,7 +486,7 @@ This means that we only used the compute engine indirectly, and the most heavy c
 >
 > Answer:
 
-[Cloud build history](figures/cloud_build.png)
+![Cloud build history](figures/cloud_build.png)
 
 ### Question 22
 
@@ -520,9 +519,9 @@ For our inference server we used Cloud Build to build the images, and we used Cl
 >
 > Answer:
 
---- question 23 fill here ---
+In this project we do not get the labels for new images which mean we are not able to detect or view data drift. We planned to do this, but ended up not having time as we spend a lot of time setting up our front and backend on GCP. Therefore the only monitoring we have for our deployed models is the build in monitoring in GCP and our own `ml_logging.py` which uses the `logging` library we have been taught about in the course.
 
-built-in in monitoring from gcp and logging, no model monitoring, unable to detect drift because no new data... what could we have done
+For training our model we monitor with weights and biases as described earlier in the report.
 
 ### Question 24
 
@@ -557,6 +556,8 @@ The total cost of the project was 0.43 dollars. We used two services, Cloud Stor
 > *Whenever we commit code and puch to github, it auto triggers ... and ... . From there the diagram shows ...*
 >
 > Answer:
+
+![this figure](figures/overview.svg)
 
 As the main focus of this course is the operations part of machine learnin operations, we chose to work with a simple image classification problem (CIFAR10). Our model of choice is a pretrained ResNet-18 from TIMM. For development and debugging purposes, however, we also implemented a simple MLP. Our models are wrappped in the pytorch lightning framework such that we can utilize their boilerplate coding and integrate with Weights & Biases easily. We use WandB for metrics logging, but also for hyperparameter sweeps. Hydra is used to manage our configurations, which the WandB sweeps also utilize.
 

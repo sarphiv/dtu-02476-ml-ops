@@ -266,7 +266,7 @@ This workflow keeps the main branch in a working state, such that continuous dep
 >
 > Answer:
 
-We have used DVC to transfer our data and trained models to a `GCS Bucket`. Here it is possible to activate object versioning and determine the number of versions that should be stored. It is especially important when dealing with dynamic datasets. Knowing which dataset corresponds to each model aids in understanding performance variations. Additionally, in scenarios where a new model performs worse after deployment, having version control facilitates efficient rollbacks to an old model that behaved better. This capability enhances our ability to identify and address issues fast, contributing to the overall robustness of the project. It also ensures reproducible results.
+We have used DVC to transfer our data and trained models to a `GCS Bucket`. Here it is possible to activate object versioning and determine the number of versions that should be stored. In our project it is not very relevant, since we have no intentions of changing the data. If our dataset was dynamic it would have been more important. Knowing which dataset corresponds to each model aids in understanding performance variations. Additionally, in scenarios where a new model performs worse after deployment, having version control facilitates efficient rollbacks to an old model that behaved better. This capability enhances our ability to identify and address issues fast, contributing to the overall robustness of the project. It also ensures reproducible results.
 
 ### Question 11
 
@@ -563,10 +563,9 @@ As the main focus of this course is the operations part of machine learnin opera
 
 We used the built-in debugger in VS-code for debugging. To minimize development issues between our different systems we opted to do everything in containers and we use devcontainers for this purpose. Now the issue of the code running on any one of the group members system but failing on others is mitigated.
 
-We use git and dvc for version control, here all code is stored in github while larger files (data and model snapshots) are stored in a GCS bucket. This enables us to work together on the project. To maintain a main branch where everything is working, all collaborators work on feature branches which are merged into main using pull requests. All pull requests must pass all pytests, ruff and pre-commit in github actions and have the approval of at least one other group member before the feature is added to the main branch. Version control for our data is not really relevant in this small project because we have no intentions in changing the data as is described earlier. TODO is this described earlier??
+We use git and dvc for version control, here all code is stored in github while larger files (data and model snapshots) are stored in a GCS bucket. This enables us to work together on the project. To maintain a main branch where everything is working, all collaborators work on feature branches which are merged into main using pull requests. All pull requests must pass all pytests, ruff and pre-commit in github actions and have the approval of at least one other group member before the feature is added to the main branch. Version control for our data is managed in GCS, but is not really relevant in this small project because we have no intentions in changing the data as is described earlier.
 
 We train our models locally and push the model snapshots to the corresponding GCS bucket (using dvc), but the deployment is done via a continuous deployment in GCP pipeline described earlier. Whenever anything is pushed to the main branch in the github repository a cloud build trigger builds both our front end server and our backend inference server images with the newest code. These are then deployed with cloud run and the newest version of the user interface is available. The website runs locally on the end users machine and the website then uses fastAPI to post a picture that the user chooses to our inference server.
-
 
 ### Question 26
 

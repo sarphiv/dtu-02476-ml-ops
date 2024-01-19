@@ -16,6 +16,7 @@ async def main():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>What is it?</title>
 
     <style>
@@ -89,7 +90,7 @@ async def main():
         <form id="file-form">
             <div id="status">What is it?</div>
             <input id="file-elem" type="file" accept="image/*" onchange="handleFiles(this.files)">
-            <label id="submit-btn" for="file-elem" onclick="document.getElementById('file-elem').click();">
+            <label id="submit-btn" for="file-elem">
                 Upload image
             </label>
         </form>

@@ -509,7 +509,7 @@ For our inference server we used Cloud Build to build the images, and we used Cl
 ### Question 23
 
 > **Did you manage to implement monitoring of your deployed model? If yes, explain how it works. If not, explain how**
-> **monitoring would help the longevity of your application.**
+> **monitoring would help the longevity of your application.** 
 >
 > Answer length: 100-200 words.
 >
@@ -519,7 +519,7 @@ For our inference server we used Cloud Build to build the images, and we used Cl
 >
 > Answer:
 
-In this project we do not get the labels for new images which mean we are not able to detect or view data drift. We planned to do this, but ended up not having time as we spend a lot of time setting up our front and backend on GCP. Therefore, the only monitoring we have for our deployed models is the build in monitoring in GCP and our own `ml_logging.py` which uses the `logging` library we have been taught about in the course. We have created an alert as part of the monitoring in GCP. It is set up to send a notification on email if the number of prediction reqeusts exceeds 5.
+In this project we do not get the labels for new images which mean we are not able to detect or view data drift. We planned to do this, but ended up not having time as we spend a lot of time setting up our front and backend on GCP. Therefore, the only monitoring we have for our deployed models is the build in monitoring in GCP and our own `ml_logging.py` which uses the `logging` library we have been taught about in the course. Using this, we are able to review what occurred if a prediction doesn't work by having logging between each step (parsing image, predicting with model etc.). We have created an alert as part of the monitoring in GCP. It is set up to send a notification on email if the number of prediction reqeusts exceeds 5.
 
 For training our model we monitor with weights and biases as described earlier in the report.
 

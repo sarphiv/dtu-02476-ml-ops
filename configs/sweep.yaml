@@ -6,8 +6,8 @@ metric:
   name: val_loss
   goal: minimize
 parameters:
-  training.models.batch_size: 
-    values: [500, 1000]
+  training.models.batch_size:
+    values: [100, 500, 1000]
   training.models.learning_rate:
     min: 0.0001
     max: 0.001

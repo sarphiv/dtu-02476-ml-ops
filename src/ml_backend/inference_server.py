@@ -9,9 +9,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from ml_backend.predict import predict_data_class, load_model_best
 from ml_backend.storage import load_from_bucket
+from ml_backend.ml_logging import get_logger as get_ml_logger
 
 
 with initialize(config_path=os.environ.get("CONFIG_DIR", "../../configs"), version_base="1.3"):
+    logger = get_ml_logger()
+    logger.info("Starting the inference server")
     cfg = compose(config_name="config")
     app = FastAPI()
     app.add_middleware(
@@ -35,13 +38,16 @@ with initialize(config_path=os.environ.get("CONFIG_DIR", "../../configs"), versi
 async def predict(data: UploadFile = File(...)):
     # Attempt converting the image to PIL format
     try:
+        logger.info("Attempting to load image")
         image = Image.open(io.BytesIO(data.file.read()))
     except Exception:
+        logger.error("Invalid image data provided")
         return {
             "message": "Invalid image data provided",
             "status-code": HTTPStatus.BAD_REQUEST,
         }
 
+    logger.info("Image loaded successfully, trying to predict...")
     # Respond with the prediction
     return {
         "predicted-class": predict_data_class(model, image, cfg),

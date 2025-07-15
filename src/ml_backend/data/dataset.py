@@ -33,8 +33,8 @@ class CIFAR10Dataset(Dataset):
         """
         super().__init__()
 
-        self.data = torch.load(data_path)
-        self.targets = torch.load(targets_path)
+        self.data = torch.load(data_path, weights_only=False)
+        self.targets = torch.load(targets_path, weights_only=False)
         self.transform = transform or to_tensor
 
 
